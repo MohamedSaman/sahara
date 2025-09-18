@@ -590,24 +590,24 @@
                                                         <div class="product-image-container me-3">
                                                             @if (isset($item['image']) && $item['image'])
                                                                 <img src="{{ asset('public/storage/' . $item['image']) }}"
-                                                                    alt="{{ $item['watch_name'] }}" class="img-fluid"
+                                                                    alt="{{ $item['Product_name'] }}" class="img-fluid"
                                                                     style="width: 100%; height: 100%; object-fit: cover;">
                                                             @else
                                                                 <div class="bg-light rounded d-flex align-items-center justify-content-center"
                                                                     style="width: 100%; height: 100%;">
-                                                                    <i class="bi bi-watch text-muted fs-4"></i>
+                                                                    <i class="bi bi-Product text-muted fs-4"></i>
                                                                 </div>
                                                             @endif
                                                         </div>
                                                         <div>
                                                             <div class="fw-semibold">{{ $item['brand'] ?? '' }}
-                                                                {{ $item['watch_name'] }}</div>
+                                                                {{ $item['Product_name'] }}</div>
                                                             <div class="text-muted small">{{ $item['model'] ?? '' }}</div>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <span class="badge bg-light text-dark">{{ $item->watch_code }}</span>
+                                                    <span class="badge bg-light text-dark">{{ $item->Product_code }}</span>
                                                 </td>
                                                 <td class="text-center fw-semibold">{{ $item->quantity }}</td>
                                                 <td class="text-end">Rs.{{ number_format($item->unit_price, 2) }}</td>
@@ -696,9 +696,9 @@
                         <div class="receipt-container">
                             <!-- Receipt Header -->
                             <div class="text-center mb-4">
-                                <h3 class="mb-0">NEW WATCH COMPANY ( MR TRADING )</h3>
-                                <p class="mb-0 text-muted small">NO 44 ,DOOLMALA ,THIHARIYA</p>
-                                <p class="mb-0 text-muted small">Phone: (033) 228 7437 | Email:hakeem9053@gmail.com</p>
+                                <h3 class="mb-0">ZAHARA INTERNATIONAL</h3>
+                                <p class="mb-0 text-muted small">NO 14/A, YATIYANA ROAD,HORAGOLLA,NITTAMBUWA</p>
+                                <p class="mb-0 text-muted small">Phone: (077) 3751785 | (033) 2297739 | Email: zahara.international@yahoo.com</p>
                                 <h4 class="mt-3 border-bottom border-2 pb-2">SALES RECEIPT</h4>
                             </div>
 
@@ -747,8 +747,8 @@
                                         @foreach ($saleItems as $index => $item)
                                             <tr>
                                                 <td>{{ $index + 1 }}</td>
-                                                <td>{{ $item->watch_name }}</td>
-                                                <td>{{ $item->watch_code }}</td>
+                                                <td>{{ $item->Product_name }}</td>
+                                                <td>{{ $item->Product_code }}</td>
                                                 <td>Rs.{{ number_format($item->unit_price, 2) }}</td>
                                                 <td>{{ $item->quantity }}</td>
                                                 <td>Rs.{{ number_format($item->discount, 2) }}</td>

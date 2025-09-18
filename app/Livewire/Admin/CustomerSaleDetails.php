@@ -37,19 +37,19 @@ class CustomerSaleDetails extends Component
             ->orderBy('created_at', 'desc')
             ->get();
             
-        // Get product-wise sales with watch details
+        // Get product-wise sales with Product details
         $productSales = DB::table('sale_items')
             ->join('sales', 'sale_items.sale_id', '=', 'sales.id')
-            ->join('watch_details', 'sale_items.watch_id', '=', 'watch_details.id')
+            ->join('Product_details', 'sale_items.Product_id', '=', 'Product_details.id')
             ->where('sales.customer_id', $customerId)
             ->select(
                 'sale_items.*',
                 'sales.invoice_number',
                 'sales.created_at as sale_date',
-                'watch_details.name as watch_name',
-                'watch_details.brand as watch_brand',
-                'watch_details.model as watch_model',
-                'watch_details.image as watch_image'
+                'Product_details.name as Product_name',
+                'Product_details.brand as Product_brand',
+                'Product_details.model as Product_model',
+                'Product_details.image as Product_image'
             )
             ->orderBy('sales.created_at', 'desc')
             ->get();

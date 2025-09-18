@@ -11,7 +11,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 #[Layout('components.layouts.admin')]
-#[Title('Staff Watch Stock')]
+#[Title('Staff Product Stock')]
 
 class StaffStockDetails extends Component
 {
@@ -22,18 +22,18 @@ class StaffStockDetails extends Component
     {
         try {
             $this->stockDetails = StaffProduct::join('users','staff_products.staff_id','=','users.id')
-                ->join('watch_details','staff_products.watch_id','=','watch_details.id')
+                ->join('Product_details','staff_products.Product_id','=','Product_details.id')
                 ->where('staff_products.staff_id', $id)
                 ->select(
                     
                     'staff_products.*',
                     'users.name as staff_name',
                     'users.email as staff_email',
-                    'watch_details.name as watch_name',
-                    'watch_details.brand as watch_brand',
-                    'watch_details.model as watch_model',
-                    'watch_details.code as watch_code',
-                    'watch_details.image as watch_image'
+                    'Product_details.name as Product_name',
+                    'Product_details.brand as Product_brand',
+                    'Product_details.model as Product_model',
+                    'Product_details.code as Product_code',
+                    'Product_details.image as Product_image'
                 )
                 ->get();
                 // dd($this->stockDetails);

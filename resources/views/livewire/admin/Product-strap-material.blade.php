@@ -2,10 +2,10 @@
     <div class="container-fluid">
         <div class="card shadow-sm">
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap bg-light p-2 p-md-3">
-                <h4 class="card-title fs-5 fs-md-4 mb-2 mb-md-0">Watch Strap Material List</h4>
+                <h4 class="card-title fs-5 fs-md-4 mb-2 mb-md-0">Product Material List</h4>
                 <div class="card-tools">
                     <button class="btn btn-primary btn-sm btn-md-md" wire:click="createStrapMaterial">
-                        <i class="bi bi-plus-circle me-1"></i> <span class="d-none d-sm-inline">Create</span> Strap Material
+                        <i class="bi bi-plus-circle me-1"></i> <span class="d-none d-sm-inline">Create</span> Product Material
                     </button>
                 </div>
             </div>
@@ -14,7 +14,7 @@
                     <table class="table table-bordered table-hover table-sm table-md-lg">
                         <thead>
                             <tr>
-                                <th class="text-center">#</th>
+                                <th class="text-center">No</th>
                                 <th class="text-center">Material Name</th>
                                 <th class="text-center d-none d-md-table-cell">Quality</th>
                                 <th class="text-center">Action</th>
@@ -50,7 +50,7 @@
                                 <tr>
                                     <td colspan="4" class="text-center">
                                         <div class="alert alert-primary bg-opacity-10 my-2">
-                                            <i class="bi bi-info-circle me-2"></i> No watches Strap Materials found.
+                                            <i class="bi bi-info-circle me-2"></i> No Products Strap Materials found.
                                         </div>
                                     </td>
                                 </tr>
@@ -66,14 +66,14 @@
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header bg-primary text-white">
-                        <h1 class="modal-title fs-5" id="createStrapMaterialModalLabel">Add Strap Material</h1>
+                        <h1 class="modal-title fs-5" id="createStrapMaterialModalLabel">Add Product Material</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body p-3">
                         <div class="row">
                             <div class="col-12">
                                 <div class="mb-3">
-                                    <label for="strapMaterialName" class="form-label">Strap Material Name</label>
+                                    <label for="strapMaterialName" class="form-label">Product Material Name</label>
                                     <input type="text" class="form-control" id="strapMaterialName"
                                         wire:model="strapMaterialName">
                                     @error('strapMaterialName')
@@ -85,7 +85,7 @@
                         <div class="row">
                             <div class="col-12">
                                 <div class="mb-3">
-                                    <label for="materialQuality" class="form-label">Strap Material Quality</label>
+                                    <label for="materialQuality" class="form-label">Material Quality</label>
                                     <select class="form-select" id="materialQuality" wire:model="materialQuality">
                                         <option value="">Select Quality</option>
                                         <option value="High">High</option>
@@ -105,7 +105,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" wire:click="saveStrapMaterial">Add Strap
+                        <button type="button" class="btn btn-primary" wire:click="saveStrapMaterial">Add Product
                             Material</button>
                     </div>
                 </div>
@@ -119,14 +119,14 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
-                    <h1 class="modal-title fs-5" id="editStrapMaterialModalLabel">Edit Strap Material</h1>
+                    <h1 class="modal-title fs-5" id="editStrapMaterialModalLabel">Edit Product Material</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-3">
                     <div class="row">
                         <div class="col-12">
                             <div class="mb-3">
-                                <label for="editStrapMaterialName" class="form-label">Strap Material Name</label>
+                                <label for="editStrapMaterialName" class="form-label">Product Material Name</label>
                                 <input type="text" class="form-control" id="editStrapMaterialName"
                                     wire:model="editStrapMaterialName">
                                 @error('editStrapMaterialName')
@@ -138,7 +138,7 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="mb-3">
-                                <label for="editMaterialQuality" class="form-label">Strap Material Quality</label>
+                                <label for="editMaterialQuality" class="form-label">Product Material Quality</label>
                                 <select class="form-select" id="editMaterialQuality" wire:model="editMaterialQuality">
                                     <option value="High">High</option>
                                     <option value="Medium">Medium</option>
@@ -158,7 +158,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary"
-                        wire:click="updateStrapMaterial({{ $editStrapMaterialId }})">Update Strap Material</button>
+                        wire:click="updateStrapMaterial({{ $editStrapMaterialId }})">Update Product Material</button>
                 </div>
             </div>
         </div>

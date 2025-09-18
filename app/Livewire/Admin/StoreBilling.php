@@ -8,14 +8,15 @@ use App\Models\Payment;
 use Livewire\Component;
 use App\Models\Customer;
 use App\Models\SaleItem;
-use App\Models\WatchStock;
-use App\Models\WatchDetail;
+use App\Models\ProductStock;
+use App\Models\ProductDetail;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Livewire\WithFileUploads;
 use App\Models\AdminSale;
+
 #[Layout('components.layouts.admin')]
 #[Title('Store Billing Page')]
 class StoreBilling extends Component
@@ -27,7 +28,7 @@ class StoreBilling extends Component
     public $cart = [];
     public $quantities = [];
     public $discounts = [];
-    public $watchDetails = null;
+    public $ProductDetails = null;
     public $subtotal = 0;
     public $totalDiscount = 0;
     public $grandTotal = 0;
@@ -88,21 +89,21 @@ class StoreBilling extends Component
     {
         if (strlen($this->search) >= 2) {
             // Search directly from main store inventory (not staff stock)
-            $this->searchResults = WatchDetail::join('watch_stocks', 'watch_stocks.watch_id', '=', 'watch_details.id')
-                ->join('watch_prices', 'watch_prices.watch_id', '=', 'watch_details.id')
+            $this->searchResults = ProductDetail::join('Product_stocks', 'Product_stocks.Product_id', '=', 'Product_details.id')
+                ->join('Product_prices', 'Product_prices.Product_id', '=', 'Product_details.id')
                 ->select(
-                    'watch_details.*',
-                    'watch_prices.selling_price as selling_price',
-                    'watch_prices.discount_price as discount_price',
-                    'watch_stocks.available_stock'
+                    'Product_details.*',
+                    'Product_prices.selling_price as selling_price',
+                    'Product_prices.discount_price as discount_price',
+                    'Product_stocks.available_stock'
                 )
-                ->where('watch_stocks.available_stock', '>', 0)
-                ->where(function($query) {
-                    $query->where('watch_details.code', 'like', '%' . $this->search . '%')
-                        ->orWhere('watch_details.model', 'like', '%' . $this->search . '%')
-                        ->orWhere('watch_details.barcode', 'like', '%' . $this->search . '%')
-                        ->orWhere('watch_details.brand', 'like', '%' . $this->search . '%')
-                        ->orWhere('watch_details.name', 'like', '%' . $this->search . '%');
+                ->where('Product_stocks.available_stock', '>', 0)
+                ->where(function ($query) {
+                    $query->where('Product_details.code', 'like', '%' . $this->search . '%')
+                        ->orWhere('Product_details.model', 'like', '%' . $this->search . '%')
+                        ->orWhere('Product_details.barcode', 'like', '%' . $this->search . '%')
+                        ->orWhere('Product_details.brand', 'like', '%' . $this->search . '%')
+                        ->orWhere('Product_details.name', 'like', '%' . $this->search . '%');
                 })
                 ->take(50)
                 ->get();
@@ -111,49 +112,49 @@ class StoreBilling extends Component
         }
     }
 
-    public function addToCart($watchId)
+    public function addToCart($ProductId)
     {
         // Get product details from store inventory
-        $watch = WatchDetail::join('watch_stocks', 'watch_stocks.watch_id', '=', 'watch_details.id')
-            ->join('watch_prices', 'watch_prices.watch_id', '=', 'watch_details.id')
-            ->where('watch_details.id', $watchId)
+        $Product = ProductDetail::join('Product_stocks', 'Product_stocks.Product_id', '=', 'Product_details.id')
+            ->join('Product_prices', 'Product_prices.Product_id', '=', 'Product_details.id')
+            ->where('Product_details.id', $ProductId)
             ->select(
-                'watch_details.*',
-                'watch_prices.selling_price as selling_price',
-                'watch_prices.discount_price as discount_price',
-                'watch_stocks.available_stock'
+                'Product_details.*',
+                'Product_prices.selling_price as selling_price',
+                'Product_prices.discount_price as discount_price',
+                'Product_stocks.available_stock'
             )
             ->first();
 
-        if (!$watch || $watch->available_stock <= 0) {
+        if (!$Product || $Product->available_stock <= 0) {
             $this->dispatch('showToast', ['type' => 'danger', 'message' => 'This product is not available in store.']);
             return;
         }
 
-        $existingItem = collect($this->cart)->firstWhere('id', $watchId);
+        $existingItem = collect($this->cart)->firstWhere('id', $ProductId);
 
         if ($existingItem) {
-            if (($this->quantities[$watchId] + 1) > $watch->available_stock) {
-                $this->dispatch('showToast', ['type' => 'warning', 'message' => "Maximum available quantity ({$watch->available_stock}) reached."]);
+            if (($this->quantities[$ProductId] + 1) > $Product->available_stock) {
+                $this->dispatch('showToast', ['type' => 'warning', 'message' => "Maximum available quantity ({$Product->available_stock}) reached."]);
                 return;
             }
-            $this->quantities[$watchId]++;
+            $this->quantities[$ProductId]++;
         } else {
-            $discountPrice = $watch->discount_price ?? 0;
-            $this->cart[$watchId] = [
-                'id' => $watch->id,
-                'code' => $watch->code,
-                'name' => $watch->name,
-                'model' => $watch->model,
-                'brand' => $watch->brand,
-                'image' => $watch->image,
-                'price' => $watch->selling_price ?? 0,
+            $discountPrice = $Product->discount_price ?? 0;
+            $this->cart[$ProductId] = [
+                'id' => $Product->id,
+                'code' => $Product->code,
+                'name' => $Product->name,
+                'model' => $Product->model,
+                'brand' => $Product->brand,
+                'image' => $Product->image,
+                'price' => $Product->selling_price ?? 0,
                 'discountPrice' => $discountPrice ?? 0,
-                'inStock' => $watch->available_stock ?? 0,
+                'inStock' => $Product->available_stock ?? 0,
             ];
 
-            $this->quantities[$watchId] = 1;
-            $this->discounts[$watchId] = $discountPrice;
+            $this->quantities[$ProductId] = 1;
+            $this->discounts[$ProductId] = $discountPrice;
         }
 
         $this->search = '';
@@ -161,23 +162,23 @@ class StoreBilling extends Component
         $this->updateTotals();
     }
 
-    public function validateQuantity($watchId)
+    public function validateQuantity($ProductId)
     {
-        if (!isset($this->cart[$watchId]) || !isset($this->quantities[$watchId])) {
+        if (!isset($this->cart[$ProductId]) || !isset($this->quantities[$ProductId])) {
             return;
         }
 
-        $maxAvailable = $this->cart[$watchId]['inStock'];
-        $currentQuantity = (int)$this->quantities[$watchId];
+        $maxAvailable = $this->cart[$ProductId]['inStock'];
+        $currentQuantity = (int)$this->quantities[$ProductId];
 
         if ($currentQuantity <= 0) {
-            $this->quantities[$watchId] = 1;
+            $this->quantities[$ProductId] = 1;
             $this->dispatch('showToast', [
                 'type' => 'warning',
                 'message' => 'Minimum quantity is 1'
             ]);
         } elseif ($currentQuantity > $maxAvailable) {
-            $this->quantities[$watchId] = $maxAvailable;
+            $this->quantities[$ProductId] = $maxAvailable;
             $this->dispatch('showToast', [
                 'type' => 'warning',
                 'message' => "Maximum available quantity is {$maxAvailable}"
@@ -187,13 +188,13 @@ class StoreBilling extends Component
         $this->updateTotals();
     }
 
-    public function updateQuantity($watchId, $quantity)
+    public function updateQuantity($ProductId, $quantity)
     {
-        if (!isset($this->cart[$watchId])) {
+        if (!isset($this->cart[$ProductId])) {
             return;
         }
 
-        $maxAvailable = $this->cart[$watchId]['inStock'];
+        $maxAvailable = $this->cart[$ProductId]['inStock'];
 
         if ($quantity <= 0) {
             $quantity = 1;
@@ -205,36 +206,36 @@ class StoreBilling extends Component
             ]);
         }
 
-        $this->quantities[$watchId] = $quantity;
+        $this->quantities[$ProductId] = $quantity;
         $this->updateTotals();
     }
 
-    public function updateDiscount($watchId, $discount)
+    public function updateDiscount($ProductId, $discount)
     {
-        $this->discounts[$watchId] = max(0, min($discount, $this->cart[$watchId]['price']));
+        $this->discounts[$ProductId] = max(0, min($discount, $this->cart[$ProductId]['price']));
         $this->updateTotals();
     }
 
-    public function removeFromCart($watchId)
+    public function removeFromCart($ProductId)
     {
-        unset($this->cart[$watchId]);
-        unset($this->quantities[$watchId]);
-        unset($this->discounts[$watchId]);
+        unset($this->cart[$ProductId]);
+        unset($this->quantities[$ProductId]);
+        unset($this->discounts[$ProductId]);
         $this->updateTotals();
     }
 
-    public function showDetail($watchId)
+    public function showDetail($ProductId)
     {
-        $this->watchDetails = WatchDetail::join('watch_stocks', 'watch_stocks.watch_id', '=', 'watch_details.id')
+        $this->ProductDetails = ProductDetail::join('Product_stocks', 'Product_stocks.Product_id', '=', 'Product_details.id')
             ->select(
-                'watch_details.*',
-                'watch_stocks.selling_price as selling_price',
-                'watch_stocks.discount_per_unit as discount_price',
-                'watch_stocks.quantity as total_stock',
-                'watch_stocks.sold_count as sold_stock',
-                DB::raw('(watch_stocks.quantity - watch_stocks.sold_count) as available_stock')
+                'Product_details.*',
+                'Product_stocks.selling_price as selling_price',
+                'Product_stocks.discount_per_unit as discount_price',
+                'Product_stocks.quantity as total_stock',
+                'Product_stocks.sold_count as sold_stock',
+                DB::raw('(Product_stocks.quantity - Product_stocks.sold_count) as available_stock')
             )
-            ->where('watch_details.id', $watchId)
+            ->where('Product_details.id', $ProductId)
             ->first();
 
         $this->js('$("#viewDetailModal").modal("show")');
@@ -328,206 +329,206 @@ class StoreBilling extends Component
 
     // (Copy all methods for payment receipt handling, due payment, etc. from staff Billing.php)
 
-    // Only change logic that references staff_products to watch_stocks
+    // Only change logic that references staff_products to Product_stocks
 
-public function completeSale()
-{
-    if (empty($this->cart)) {
-        $this->js('swal.fire("Error", "Please add items to the cart.", "error")');
-        return;
-    }
 
-    $this->validate([
-        'customerId' => 'required',
-        'paymentType' => 'required|in:full,partial',
-    ]);
-
-    // Validate full or partial payments
-    // ... (re-use your same validation logic from `completeSale()`)
-// Validate full or partial payments
-if ($this->paymentType === 'full') {
-    if ($this->grandTotal <= 0 || !$this->paymentMethod) {
-        $this->js('swal.fire("Error", "Please enter a valid amount and select a payment method for full payment.", "error")');
-        return;
-    }
-
-    if ($this->paymentMethod === 'cheque' && !$this->bankName) {
-        $this->js('swal.fire("Error", "Please provide a bank name for the cheque payment.", "error")');
-        return;
-    }
-} elseif ($this->paymentType === 'partial') {
-    if ($this->initialPaymentAmount === null || $this->initialPaymentAmount < 0 || !$this->initialPaymentMethod) {
-        $this->js('swal.fire("Error", "Please enter a valid initial payment amount and select a payment method.", "error")');
-        return;
-    }
-
-    if ($this->initialPaymentMethod === 'cheque' && !$this->initialBankName) {
-        $this->js('swal.fire("Error", "Please provide a bank name for the initial cheque payment.", "error")');
-        return;
-    }
-
-    if ($this->balanceAmount > 0) {
-        if (!$this->balancePaymentMethod) {
-            $this->js('swal.fire("Error", "Please select a payment method for the balance amount.", "error")');
+    public function completeSale()
+    {
+        if (empty($this->cart)) {
+            $this->js('swal.fire("Error", "Please add items to the cart.", "error")');
             return;
         }
 
-        // Only require bank name if payment method is cheque, otherwise allow null
-        if ($this->balancePaymentMethod === 'cheque' && !$this->balanceBankName) {
-            $this->balanceBankName = null; // Set to null if not provided
-            // Do not show error, just proceed
-        }
-
-        if (!$this->balanceDueDate) {
-            $this->js('swal.fire("Error", "Please provide a due date for the balance payment.", "error")');
-            return;
-        }
-    }
-}
-
-    try {
-        DB::beginTransaction();
-
-        // 1. Create Sale record
-        $sale = Sale::create([
-            'invoice_number'   => Sale::generateInvoiceNumber(),
-            'customer_id'      => $this->customerId,
-            'user_id'          => auth()->id(),
-            'customer_type'    => Customer::find($this->customerId)->type,
-            'subtotal'         => $this->subtotal,
-            'discount_amount'  => $this->totalDiscount,
-            'total_amount'     => $this->grandTotal,
-            'payment_type'     => $this->paymentType,
-            'payment_status'   => $this->paymentType === 'full' ? 'paid' : 'partial',
-            'notes'            => $this->saleNotes,
-            'due_amount'       => $this->balanceAmount,
+        $this->validate([
+            'customerId' => 'required',
+            'paymentType' => 'required|in:full,partial',
         ]);
 
-        // 2. Create AdminSale record
-        $adminSale = AdminSale::create([
-            'sale_id'        => $sale->id,
-            'admin_id'       => auth()->id(),
-            'total_quantity' => array_sum($this->quantities),
-            'total_value'    => $this->grandTotal,
-            'sold_quantity'  => 0, // will update below
-            'sold_value'     => 0, // will update below
-            'status'         => 'partial', // will update below
-        ]);
-
-        $totalSoldQty = 0;
-        $totalSoldVal = 0;
-
-        foreach ($this->cart as $id => $item) {
-           $watchStock = WatchStock::where('watch_id', $item['id'])->first();
-if (!$watchStock || $watchStock->available_stock < $this->quantities[$id]) {
-    throw new Exception("Insufficient stock for item: {$item['name']}. Available: {$watchStock->available_stock}");
-}
-
-            $price = $item['price'] ?: 0;
-            $itemDiscount = $this->discounts[$id] ?? 0;
-            $total = ($price * $this->quantities[$id]) - ($itemDiscount * $this->quantities[$id]);
-
-            // Insert sale item (linked to sales table)
-            SaleItem::create([
-                'sale_id'    => $sale->id,
-                'watch_id'   => $item['id'],
-                'watch_code' => $item['code'],
-                'watch_name' => $item['name'],
-                'quantity'   => $this->quantities[$id],
-                'unit_price' => $price,
-                'discount'   => $itemDiscount,
-                'total'      => $total,
-            ]);
-
-            // Update stock
- $watchStock->sold_count += $this->quantities[$id];
-$watchStock->available_stock -= $this->quantities[$id];
-$watchStock->save();
-
-            $totalSoldQty += $this->quantities[$id];
-            $totalSoldVal += $total;
-        }
-
-        // Update admin sale status and sold values
-        $adminSale->sold_quantity = $totalSoldQty;
-        $adminSale->sold_value = $totalSoldVal;
-        $adminSale->status = $totalSoldQty == $adminSale->total_quantity ? 'completed' : 'partial';
-        $adminSale->save();
-
-        // Handle payment (link to sale)
-        if ($this->paymentType == 'full') {
-            $receiptPath = null;
-            if ($this->paymentReceiptImage) {
-                $receiptPath = $this->paymentReceiptImage->store('admin-payment-receipts', 'public');
+        // Validate full or partial payments
+        // ... (re-use your same validation logic from `completeSale()`)
+        // Validate full or partial payments
+        if ($this->paymentType === 'full') {
+            if ($this->grandTotal <= 0 || !$this->paymentMethod) {
+                $this->js('swal.fire("Error", "Please enter a valid amount and select a payment method for full payment.", "error")');
+                return;
             }
 
-            Payment::create([
-                'sale_id'         => $sale->id,
-                'admin_sale_id'   => $adminSale->id,
-                'amount'          => $this->grandTotal,
-                'payment_method'  => $this->paymentMethod,
-                'payment_reference' => $receiptPath,
-                'bank_name'       => $this->paymentMethod == 'cheque' ? $this->bankName : null,
-                'is_completed'    => true,
-                'payment_date'    => now(),
-                'status'          => 'Paid',
+            if ($this->paymentMethod === 'cheque' && !$this->bankName) {
+                $this->js('swal.fire("Error", "Please provide a bank name for the cheque payment.", "error")');
+                return;
+            }
+        } elseif ($this->paymentType === 'partial') {
+            if ($this->initialPaymentAmount === null || $this->initialPaymentAmount < 0 || !$this->initialPaymentMethod) {
+                $this->js('swal.fire("Error", "Please enter a valid initial payment amount and select a payment method.", "error")');
+                return;
+            }
+
+            if ($this->initialPaymentMethod === 'cheque' && !$this->initialBankName) {
+                $this->js('swal.fire("Error", "Please provide a bank name for the initial cheque payment.", "error")');
+                return;
+            }
+
+            if ($this->balanceAmount > 0) {
+                if (!$this->balancePaymentMethod) {
+                    $this->js('swal.fire("Error", "Please select a payment method for the balance amount.", "error")');
+                    return;
+                }
+
+                // Only require bank name if payment method is cheque, otherwise allow null
+                if ($this->balancePaymentMethod === 'cheque' && !$this->balanceBankName) {
+                    $this->balanceBankName = null; // Set to null if not provided
+                    // Do not show error, just proceed
+                }
+
+                if (!$this->balanceDueDate) {
+                    $this->js('swal.fire("Error", "Please provide a due date for the balance payment.", "error")');
+                    return;
+                }
+            }
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // 1. Create Sale record
+            $sale = Sale::create([
+                'invoice_number'   => Sale::generateInvoiceNumber(),
+                'customer_id'      => $this->customerId,
+                'user_id'          => auth()->id(),
+                'customer_type'    => Customer::find($this->customerId)->type,
+                'subtotal'         => $this->subtotal,
+                'discount_amount'  => $this->totalDiscount,
+                'total_amount'     => $this->grandTotal,
+                'payment_type'     => $this->paymentType,
+                'payment_status'   => $this->paymentType === 'full' ? 'paid' : 'partial',
+                'notes'            => $this->saleNotes,
+                'due_amount'       => $this->balanceAmount,
             ]);
-        } else {
-            // Initial partial payment
-            if ($this->initialPaymentAmount > 0) {
-                $initialReceiptPath = null;
-                if ($this->initialPaymentReceiptImage) {
-                    $initialReceiptPath = $this->initialPaymentReceiptImage->store('admin-payment-receipts', 'public');
+
+            // 2. Create AdminSale record
+            $adminSale = AdminSale::create([
+                'sale_id'        => $sale->id,
+                'admin_id'       => auth()->id(),
+                'total_quantity' => array_sum($this->quantities),
+                'total_value'    => $this->grandTotal,
+                'sold_quantity'  => 0, // will update below
+                'sold_value'     => 0, // will update below
+                'status'         => 'partial', // will update below
+            ]);
+
+            $totalSoldQty = 0;
+            $totalSoldVal = 0;
+
+            foreach ($this->cart as $id => $item) {
+                $ProductStock = ProductStock::where('Product_id', $item['id'])->first();
+                if (!$ProductStock || $ProductStock->available_stock < $this->quantities[$id]) {
+                    throw new Exception("Insufficient stock for item: {$item['name']}. Available: {$ProductStock->available_stock}");
+                }
+
+                $price = $item['price'] ?: 0;
+                $itemDiscount = $this->discounts[$id] ?? 0;
+                $total = ($price * $this->quantities[$id]) - ($itemDiscount * $this->quantities[$id]);
+
+                // Insert sale item (linked to sales table)
+                SaleItem::create([
+                    'sale_id'    => $sale->id,
+                    'Product_id'   => $item['id'],
+                    'Product_code' => $item['code'],
+                    'Product_name' => $item['name'],
+                    'quantity'   => $this->quantities[$id],
+                    'unit_price' => $price,
+                    'discount'   => $itemDiscount,
+                    'total'      => $total,
+                ]);
+
+                // Update stock
+                $ProductStock->sold_count += $this->quantities[$id];
+                $ProductStock->available_stock -= $this->quantities[$id];
+                $ProductStock->save();
+
+                $totalSoldQty += $this->quantities[$id];
+                $totalSoldVal += $total;
+            }
+
+            // Update admin sale status and sold values
+            $adminSale->sold_quantity = $totalSoldQty;
+            $adminSale->sold_value = $totalSoldVal;
+            $adminSale->status = $totalSoldQty == $adminSale->total_quantity ? 'completed' : 'partial';
+            $adminSale->save();
+
+            // Handle payment (link to sale)
+            if ($this->paymentType == 'full') {
+                $receiptPath = null;
+                if ($this->paymentReceiptImage) {
+                    $receiptPath = $this->paymentReceiptImage->store('admin-payment-receipts', 'public');
                 }
 
                 Payment::create([
                     'sale_id'         => $sale->id,
                     'admin_sale_id'   => $adminSale->id,
-                    'amount'          => $this->initialPaymentAmount,
-                    'payment_method'  => $this->initialPaymentMethod,
-                    'payment_reference' => $initialReceiptPath,
-                    'bank_name'       => $this->initialPaymentMethod == 'cheque' ? $this->initialBankName : null,
+                    'amount'          => $this->grandTotal,
+                    'payment_method'  => $this->paymentMethod,
+                    'payment_reference' => $receiptPath,
+                    'bank_name'       => $this->paymentMethod == 'cheque' ? $this->bankName : null,
                     'is_completed'    => true,
                     'payment_date'    => now(),
                     'status'          => 'Paid',
                 ]);
-            }
+            } else {
+                // Initial partial payment
+                if ($this->initialPaymentAmount > 0) {
+                    $initialReceiptPath = null;
+                    if ($this->initialPaymentReceiptImage) {
+                        $initialReceiptPath = $this->initialPaymentReceiptImage->store('admin-payment-receipts', 'public');
+                    }
 
-            // Balance due payment
-            if ($this->balanceAmount > 0) {
-                $balanceReceiptPath = null;
-                if ($this->balancePaymentReceiptImage) {
-                    $balanceReceiptPath = $this->balancePaymentReceiptImage->store('admin-payment-receipts', 'public');
+                    Payment::create([
+                        'sale_id'         => $sale->id,
+                        'admin_sale_id'   => $adminSale->id,
+                        'amount'          => $this->initialPaymentAmount,
+                        'payment_method'  => $this->initialPaymentMethod,
+                        'payment_reference' => $initialReceiptPath,
+                        'bank_name'       => $this->initialPaymentMethod == 'cheque' ? $this->initialBankName : null,
+                        'is_completed'    => true,
+                        'payment_date'    => now(),
+                        'status'          => 'Paid',
+                    ]);
                 }
 
-                Payment::create([
-                    'sale_id'         => $sale->id,
-                    'admin_sale_id'   => $adminSale->id,
-                    'amount'          => $this->balanceAmount,
-                    'payment_method'  => $this->balancePaymentMethod,
-                    'payment_reference' => $balanceReceiptPath,
-                    'bank_name'       => $this->balancePaymentMethod == 'cheque' ? $this->balanceBankName : null,
-                    'is_completed'    => false,
-                    'due_date'        => $this->balanceDueDate,
-                ]);
+                // Balance due payment
+                if ($this->balanceAmount > 0) {
+                    $balanceReceiptPath = null;
+                    if ($this->balancePaymentReceiptImage) {
+                        $balanceReceiptPath = $this->balancePaymentReceiptImage->store('admin-payment-receipts', 'public');
+                    }
+
+                    Payment::create([
+                        'sale_id'         => $sale->id,
+                        'admin_sale_id'   => $adminSale->id,
+                        'amount'          => $this->balanceAmount,
+                        'payment_method'  => $this->balancePaymentMethod,
+                        'payment_reference' => $balanceReceiptPath,
+                        'bank_name'       => $this->balancePaymentMethod == 'cheque' ? $this->balanceBankName : null,
+                        'is_completed'    => false,
+                        'due_date'        => $this->balanceDueDate,
+                    ]);
+                }
             }
+
+            DB::commit();
+
+            $this->lastSaleId = $sale->id;
+            $this->showReceipt = true;
+            $this->js('swal.fire("Success", "Sale completed successfully! Invoice #' . $sale->invoice_number . '", "success")');
+            $this->clearCart();
+            $this->resetPaymentInfo();
+            $this->js('$("#receiptModal").modal("show")');
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Admin sale error: ' . $e->getMessage());
+            $this->js('swal.fire("Error", "An error occurred: ' . $e->getMessage() . '", "error")');
         }
-
-        DB::commit();
-
-        $this->lastSaleId = $sale->id;
-        $this->showReceipt = true;
-        $this->js('swal.fire("Success", "Sale completed successfully! Invoice #' . $sale->invoice_number . '", "success")');
-        $this->clearCart();
-        $this->resetPaymentInfo();
-        $this->js('$("#receiptModal").modal("show")');
-
-    } catch (Exception $e) {
-        DB::rollBack();
-        Log::error('Admin sale error: ' . $e->getMessage());
-        $this->js('swal.fire("Error", "An error occurred: ' . $e->getMessage() . '", "error")');
     }
-}
 
 
     public function resetPaymentInfo()

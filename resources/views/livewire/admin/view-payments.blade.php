@@ -237,9 +237,9 @@
                         <div class="receipt-container">
                             <!-- Receipt Header -->
                             <div class="text-center mb-4">
-                                <h3 class="mb-0">NEW WATCH COMPANY ( MR TRADING )</h3>
-                                <p class="mb-0 text-muted small">NO 44, DOOLMALA, THIHARIYA</p>
-                                <p class="mb-0 text-muted small">Phone: (033) 228 7437 | Email: hakeem9053@gmail.com</p>
+                                <h3 class="mb-0">ZAHARA INTERNATIONAL</h3>
+                                <p class="mb-0 text-muted small">NO 14/A, YATIYANA ROAD,HORAGOLLA,NITTAMBUWA</p>
+                                <p class="mb-0 text-muted small">Phone: (077) 3751785 | (033) 2297739 | Email: zahara.international@yahoo.com</p>
                                 <h4 class="mt-3 border-bottom border-2 pb-2">PAYMENT RECEIPT</h4>
                             </div>
 
@@ -408,7 +408,7 @@
                                 <table class="table table-bordered table-sm">
                                     <thead class="table-light">
                                         <tr>
-                                            <th scope="col">#</th>
+                                            <th scope="col">No</th>
                                             <th scope="col">Item</th>
                                             <th scope="col">Code</th>
                                             <th scope="col">Price</th>
@@ -421,8 +421,8 @@
                                         @foreach ($selectedPayment->sale->items as $index => $item)
                                             <tr>
                                                 <td>{{ $index + 1 }}</td>
-                                                <td>{{ $item->watch_name }}</td>
-                                                <td>{{ $item->watch_code }}</td>
+                                                <td>{{ $item->Product_name }}</td>
+                                                <td>{{ $item->Product_code }}</td>
                                                 <td>Rs.{{ number_format($item->unit_price, 2) }}</td>
                                                 <td>{{ $item->quantity }}</td>
                                                 <td>Rs.{{ number_format($item->discount, 2) }}</td>

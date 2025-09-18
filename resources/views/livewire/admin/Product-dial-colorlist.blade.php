@@ -2,10 +2,10 @@
     <div class="container-fluid">
         <div class="card shadow-sm">
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap bg-light p-2 p-md-3">
-                <h4 class="card-title fs-5 fs-md-4 mb-2 mb-md-0">Watch Dial Color List</h4>
+                <h4 class="card-title fs-5 fs-md-4 mb-2 mb-md-0">Product Dial Color List</h4>
                 <div class="card-tools">
                     <button class="btn btn-primary btn-sm btn-md-md" wire:click="createDialColor">
-                        <i class="bi bi-plus-circle me-1"></i> <span class="d-none d-sm-inline">Create</span> Watch Color
+                        <i class="bi bi-plus-circle me-1"></i> <span class="d-none d-sm-inline">Create</span> Product Color
                     </button>
                 </div>
             </div>
@@ -14,7 +14,7 @@
                 <table class="table table-bordered table-hover table-sm table-md-lg">
                     <thead>
                         <tr>
-                            <th class="text-center">#</th>
+                            <th class="text-center">No</th>
                             <th class="text-center">Color Name</th>
                             <th class="text-center d-none d-md-table-cell">Hex Code</th>
                             <th class="text-center">View</th>
@@ -61,7 +61,7 @@
                             <tr>
                                 <td colspan="5" class="text-center">
                                     <div class="alert alert-primary bg-opacity-10 my-2">
-                                        <i class="bi bi-info-circle me-2"></i> No watches Dial Colors found.
+                                        <i class="bi bi-info-circle me-2"></i> No Products Dial Colors found.
                                     </div>
                                 </td>
                             </tr>

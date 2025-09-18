@@ -2,10 +2,10 @@
     <div class="container-fluid">
         <div class="card shadow-sm">
             <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 bg-light">
-                <h4 class="card-title mb-2 mb-md-0">Watch Color List</h4>
+                <h4 class="card-title mb-2 mb-md-0">Product Color List</h4>
                 <div class="card-tools">
                     <button class="btn btn-primary w-100 w-md-auto" wire:click="createColor">
-                        <i class="bi bi-plus-circle me-1"></i> Create Watch Color
+                        <i class="bi bi-plus-circle me-1"></i> Create Product Color
                     </button>
                 </div>
             </div>
@@ -14,7 +14,7 @@
                     <table class="table table-bordered table-hover">
                         <thead>
                             <tr>
-                                <th class="text-center">#</th>
+                                <th class="text-center">No</th>
                                 <th class="text-center">Color Name</th>
                                 <th class="text-center">Hex Code</th>
                                 <th class="text-center">View</th>
@@ -61,7 +61,7 @@
                             @else
                                 <td colspan="4" class="text-center">
                                     <div class="alert alert-primary bg-opacity-10 my-2">
-                                        <i class="bi bi-info-circle me-2"></i> No watches colors found.
+                                        <i class="bi bi-info-circle me-2"></i> No Products colors found.
                                     </div>
                                 </td>
                             @endif

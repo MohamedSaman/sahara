@@ -17,7 +17,7 @@
                     <table class="table table-bordered table-hover">
                         <thead class="table-light">
                             <tr>
-                                <th class="text-center">#</th>
+                                <th class="text-center">No</th>
                                 <th class="text-center">Image</th>
                                 <th>Name</th>
                                 <th>Code</th>
@@ -36,7 +36,7 @@
                                         <td class="text-center">{{ $loop->iteration }}</td>
                                         <td class="text-center">
                                             @if($ProductStock->Product_image)
-                                                <img src="{{ asset('public/storage/' . $ProductStock->Product_image) }}" 
+                                                <img src="{{ asset('storage/' . $ProductStock->Product_image) }}" 
                                                     alt="{{ $ProductStock->Product_name }}"
                                                     class="img-thumbnail" 
                                                     style="width: 40px; height: 40px; object-fit: cover;">

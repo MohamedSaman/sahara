@@ -83,7 +83,7 @@
                                                         @else
                                                             <div class="no-image bg-light d-flex align-items-center justify-content-center rounded"
                                                                 style="width: 60px; height: 60px;">
-                                                                <i class="fas fa-watch text-muted"></i>
+                                                                <i class="fas fa-Product text-muted"></i>
                                                             </div>
                                                         @endif
                                                     </div>
@@ -97,7 +97,7 @@
                                                     <div class="product-info flex-grow-1">
                                                         <div class="d-flex justify-content-between align-items-center">
                                                             <h6 class="mb-0 fw-bold">
-                                                                {{ $result->name ?? 'Unnamed Watch' }}</h6>
+                                                                {{ $result->name ?? 'Unnamed Product' }}</h6>
                                                             <div>
                                                                 <span
                                                                     class="badge bg-success">Rs.{{ $result->selling_price ?? '-' }}</span>
@@ -131,7 +131,7 @@
                                     <div
                                         class="search-results-container position-absolute mt-1 w-100 bg-white shadow-lg rounded">
                                         <div class="p-3 text-center text-muted">
-                                            No watches found matching "{{ $search }}"
+                                            No Productes found matching "{{ $search }}"
                                         </div>
                                     </div>
                                 @endif
@@ -170,7 +170,7 @@
                                                         @else
                                                             <div
                                                                 class="avatar avatar-sm me-3 bg-gradient-secondary d-flex align-items-center justify-content-center">
-                                                                <i class="fas fa-watch text-lg text-white"></i>
+                                                                <i class="fas fa-Product text-lg text-white"></i>
                                                             </div>
                                                         @endif
                                                     </div>
@@ -194,7 +194,7 @@
                                                         {{ $quantities[$id] <= 1 ? 'disabled' : '' }}>-</button>
                                                     <input type="number"
                                                         class="form-control form-control-sm text-center quantity-input"
-                                                        data-watch-id="{{ $id }}"
+                                                        data-Product-id="{{ $id }}"
                                                         {{-- data-max="{{ $item['inStock'] }}" --}}
                                                         value="{{ $quantities[$id] }}" 
                                                         min="1"
@@ -747,17 +747,17 @@
                     </div>
                 </div>
             </div>
-            <!-- View Watch Modal -->
+            <!-- View Product Modal -->
             <div wire:ignore.self class="modal fade" id="viewDetailModal" tabindex="-1"
                 aria-labelledby="viewDetailModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-xl modal-dialog-scrollable">
                     <div class="modal-content">
                         <div class="modal-header bg-primary">
-                            <h1 class="modal-title fs-5 text-white" id="viewDetailModalLabel">Watch Details</h1>
+                            <h1 class="modal-title fs-5 text-white" id="viewDetailModalLabel">Product Details</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                 aria-label="Close"></button>
                         </div>
-                        @if ($watchDetails)
+                        @if ($ProductDetails)
                             <div class="modal-body p-4">
                                 <div class="card shadow-sm border-0">
                                     <div class="card-body p-0">
@@ -765,14 +765,14 @@
                                             <!-- Image Column -->
                                             <div class="col-md-4 border-end">
                                                 <div class="position-relative h-100">
-                                                    @if ($watchDetails->image)
-                                                        <img src="{{ asset('public/storage/' . $watchDetails->image) }}"
-                                                            alt="{{ $watchDetails->name }}"
+                                                    @if ($ProductDetails->image)
+                                                        <img src="{{ asset('public/storage/' . $ProductDetails->image) }}"
+                                                            alt="{{ $ProductDetails->name }}"
                                                             class="img-fluid rounded-start h-100 w-100 object-fit-cover">
                                                     @else
                                                         <div
                                                             class="bg-light d-flex align-items-center justify-content-center h-100">
-                                                            <i class="bi bi-watch text-muted"
+                                                            <i class="bi bi-Product text-muted"
                                                                 style="font-size: 5rem;"></i>
                                                             <p class="text-muted">No image
                                                                 available</p>
@@ -783,12 +783,12 @@
                                                     <div
                                                         class="position-absolute top-0 end-0 p-2 d-flex flex-column gap-2">
                                                         <span
-                                                            class="badge bg-{{ $watchDetails->status == 'active' ? 'success' : 'danger' }}">
-                                                            {{ ucfirst($watchDetails->status) }}
+                                                            class="badge bg-{{ $ProductDetails->status == 'active' ? 'success' : 'danger' }}">
+                                                            {{ ucfirst($ProductDetails->status) }}
                                                         </span>
 
                                                         <!-- Stock Status Badge -->
-                                                        @if ($watchDetails->available_stock > 0)
+                                                        @if ($ProductDetails->available_stock > 0)
                                                             <span class="badge bg-success">
                                                                 <i class="bi bi-check-circle-fill"></i>
                                                                 In Stock
@@ -809,14 +809,14 @@
                                                     <div
                                                         class="d-flex justify-content-between align-items-center mb-3">
                                                         <h3 class="fw-bold mb-0 text-primary">
-                                                            {{ $watchDetails->name }}
+                                                            {{ $ProductDetails->name }}
                                                         </h3>
                                                     </div>
 
                                                     <!-- Display code prominently -->
                                                     <div class="mb-3">
                                                         <span class="badge bg-dark p-2 fs-6">Code:
-                                                            {{ $watchDetails->code }}</span>
+                                                            {{ $ProductDetails->code }}</span>
                                                     </div>
 
                                                     <div class="row mb-3">
@@ -824,14 +824,14 @@
                                                             <p class="text-muted mb-1">
                                                                 Brand</p>
                                                             <h5 class="fw-bold text-primary">
-                                                                {{ $watchDetails->brand }}
+                                                                {{ $ProductDetails->brand }}
                                                             </h5>
                                                         </div>
                                                         <div class="col-md-6">
                                                             <p class="text-muted mb-1">
                                                                 Model</p>
                                                             <h5 class="text-primary">
-                                                                {{ $watchDetails->model }}
+                                                                {{ $ProductDetails->model }}
                                                             </h5>
                                                         </div>
                                                     </div>
@@ -841,14 +841,14 @@
                                                             <p class="text-muted mb-1">
                                                                 Category</p>
                                                             <h5 class="text-primary">
-                                                                {{ $watchDetails->category }}
+                                                                {{ $ProductDetails->category }}
                                                             </h5>
                                                         </div>
                                                         <div class="col-md-6">
                                                             <p class="text-muted mb-1">
                                                                 Gender</p>
                                                             <h5 class="text-primary">
-                                                                {{ ucfirst($watchDetails->gender) }}
+                                                                {{ ucfirst($ProductDetails->gender) }}
                                                             </h5>
                                                         </div>
                                                     </div>
@@ -856,7 +856,7 @@
                                                     <div class="mb-4">
                                                         <p class="text-muted mb-1">
                                                             Description</p>
-                                                        <p>{{ $watchDetails->description }}
+                                                        <p>{{ $ProductDetails->description }}
                                                         </p>
                                                     </div>
 
@@ -866,12 +866,12 @@
                                                             <div>
                                                                 <h5 class="text-danger fw-bold mb-0">
                                                                     Rs.
-                                                                    {{ number_format($watchDetails->selling_price, 2) }}
+                                                                    {{ number_format($ProductDetails->selling_price, 2) }}
                                                                 </h5>
-                                                                @if ($watchDetails->available_stock > 0)
+                                                                @if ($ProductDetails->available_stock > 0)
                                                                     <small class="text-success">
                                                                         <i class="bi bi-check-circle-fill"></i>
-                                                                        {{ $watchDetails->available_stock }}
+                                                                        {{ $ProductDetails->available_stock }}
                                                                         units
                                                                         available
                                                                     </small>
@@ -883,7 +883,7 @@
                                                                     </small>
                                                                 @endif
                                                             </div>
-                                                            @if ($watchDetails->discount_price > 0)
+                                                            @if ($ProductDetails->discount_price > 0)
                                                                 <div class="position-relative">
                                                                     <div
                                                                         class="position-absolute top-0 start-50 translate-middle">
@@ -895,7 +895,7 @@
                                                                         style="background-color: rgba(25, 135, 84, 0.1);">
                                                                         <span class="text-success fw-bold fs-5">
                                                                             SAVE Rs.
-                                                                            {{ number_format($watchDetails->discount_price, 2) }}
+                                                                            {{ number_format($ProductDetails->discount_price, 2) }}
                                                                         </span>
                                                                     </div>
                                                                 </div>
@@ -909,7 +909,7 @@
                                 </div>
 
                                 <!-- Detailed Specifications using Accordion instead of Tabs -->
-                                <div class="accordion mt-4" id="watchDetailsAccordion">
+                                <div class="accordion mt-4" id="ProductDetailsAccordion">
                                     <!-- Specifications Section -->
                                     <div class="accordion-item">
                                         <h2 class="accordion-header">
@@ -921,7 +921,7 @@
                                             </button>
                                         </h2>
                                         <div id="specs-collapse" class="accordion-collapse collapse show"
-                                            data-bs-parent="#watchDetailsAccordion">
+                                            data-bs-parent="#ProductDetailsAccordion">
                                             <div class="accordion-body">
                                                 <div class="row">
                                                     <div class="col-md-6">
@@ -931,35 +931,35 @@
                                                                     <th class="text-muted" width="40%">
                                                                         Color</th>
                                                                     <td class="text-primary fw-medium">
-                                                                        {{ $watchDetails->color }}
+                                                                        {{ $ProductDetails->color }}
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <th class="text-muted">
                                                                         Made By</th>
                                                                     <td class="text-primary fw-medium">
-                                                                        {{ $watchDetails->made_by }}
+                                                                        {{ $ProductDetails->made_by }}
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <th class="text-muted">
                                                                         Movement</th>
                                                                     <td class="text-primary fw-medium">
-                                                                        {{ $watchDetails->movement }}
+                                                                        {{ $ProductDetails->movement }}
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <th class="text-muted">
                                                                         Type</th>
                                                                     <td class="text-primary fw-medium">
-                                                                        {{ $watchDetails->type }}
+                                                                        {{ $ProductDetails->type }}
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <th class="text-muted">
                                                                         Dial Color</th>
                                                                     <td class="text-primary fw-medium">
-                                                                        {{ $watchDetails->dial_color }}
+                                                                        {{ $ProductDetails->dial_color }}
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
@@ -967,7 +967,7 @@
                                                                         Water Resistance
                                                                     </th>
                                                                     <td class="text-primary fw-medium">
-                                                                        {{ $watchDetails->water_resistance }}
+                                                                        {{ $ProductDetails->water_resistance }}
                                                                     </td>
                                                                 </tr>
                                                             </tbody>
@@ -982,42 +982,42 @@
                                                                         Diameter
                                                                     </th>
                                                                     <td class="text-primary fw-medium">
-                                                                        {{ $watchDetails->case_diameter_mm }}
+                                                                        {{ $ProductDetails->case_diameter_mm }}
                                                                         mm</td>
                                                                 </tr>
                                                                 <tr>
                                                                     <th class="text-muted">
                                                                         Case Thickness</th>
                                                                     <td class="text-primary fw-medium">
-                                                                        {{ $watchDetails->case_thickness_mm }}
+                                                                        {{ $ProductDetails->case_thickness_mm }}
                                                                         mm</td>
                                                                 </tr>
                                                                 <tr>
                                                                     <th class="text-muted">
                                                                         Glass Type</th>
                                                                     <td class="text-primary fw-medium">
-                                                                        {{ $watchDetails->glass_type }}
+                                                                        {{ $ProductDetails->glass_type }}
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <th class="text-muted">
                                                                         Strap Material</th>
                                                                     <td class="text-primary fw-medium">
-                                                                        {{ $watchDetails->strap_material }}
+                                                                        {{ $ProductDetails->strap_material }}
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <th class="text-muted">
                                                                         Strap Color</th>
                                                                     <td class="text-primary fw-medium">
-                                                                        {{ $watchDetails->strap_color }}
+                                                                        {{ $ProductDetails->strap_color }}
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <th class="text-muted">
                                                                         Features</th>
                                                                     <td class="text-primary fw-medium">
-                                                                        {{ $watchDetails->features }}
+                                                                        {{ $ProductDetails->features }}
                                                                     </td>
                                                                 </tr>
                                                             </tbody>
@@ -1039,7 +1039,7 @@
                                             </button>
                                         </h2>
                                         <div id="inventory-collapse" class="accordion-collapse collapse"
-                                            data-bs-parent="#watchDetailsAccordion">
+                                            data-bs-parent="#ProductDetailsAccordion">
                                             <div class="accordion-body">
                                                 <div class="row">
                                                     <div class="col-md-6">
@@ -1049,7 +1049,7 @@
                                                                     <p class="card-text fw-bold">
                                                                         Shop Stock</p>
                                                                     <h4 class="card-title text-primary">
-                                                                        {{ $watchDetails->shop_stock }}
+                                                                        {{ $ProductDetails->shop_stock }}
                                                                     </h4>
                                                                 </div>
                                                             </div>
@@ -1062,7 +1062,7 @@
                                                                     <p class="card-text fw-bold">
                                                                         Store Stock</p>
                                                                     <h4 class="card-title text-primary">
-                                                                        {{ $watchDetails->store_stock }}
+                                                                        {{ $ProductDetails->store_stock }}
                                                                     </h4>
                                                                 </div>
                                                             </div>
@@ -1078,7 +1078,7 @@
                                                                     <p class="card-text fw-bold">
                                                                         Damage Stock</p>
                                                                     <h4 class="card-title text-danger">
-                                                                        {{ $watchDetails->damage_stock }}
+                                                                        {{ $ProductDetails->damage_stock }}
                                                                     </h4>
                                                                 </div>
                                                             </div>
@@ -1086,14 +1086,14 @@
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div
-                                                            class="card mb-3 {{ $watchDetails->available_stock > 0 ? 'border-success' : 'border-danger' }}">
+                                                            class="card mb-3 {{ $ProductDetails->available_stock > 0 ? 'border-success' : 'border-danger' }}">
                                                             <div class="card-body">
                                                                 <div class="d-flex justify-content-between">
                                                                     <p class="card-text fw-bold">
                                                                         Available Stock</p>
                                                                     <h4
-                                                                        class="card-title {{ $watchDetails->available_stock > 0 ? 'text-success' : 'text-danger' }}">
-                                                                        {{ $watchDetails->available_stock }}
+                                                                        class="card-title {{ $ProductDetails->available_stock > 0 ? 'text-success' : 'text-danger' }}">
+                                                                        {{ $ProductDetails->available_stock }}
                                                                     </h4>
                                                                 </div>
                                                             </div>
@@ -1109,7 +1109,7 @@
                                                                     <p class="card-text fw-bold">
                                                                         Total Stock</p>
                                                                     <h4 class="card-title">
-                                                                        {{ $watchDetails->total_stock }}
+                                                                        {{ $ProductDetails->total_stock }}
                                                                     </h4>
                                                                 </div>
                                                             </div>
@@ -1122,7 +1122,7 @@
                                                                     <p class="card-text fw-bold">
                                                                         Store Location</p>
                                                                     <h5 class="card-title text-info">
-                                                                        {{ $watchDetails->location }}
+                                                                        {{ $ProductDetails->location }}
                                                                     </h5>
                                                                 </div>
                                                             </div>
@@ -1144,7 +1144,7 @@
                                             </button>
                                         </h2>
                                         <div id="supplier-collapse" class="accordion-collapse collapse"
-                                            data-bs-parent="#watchDetailsAccordion">
+                                            data-bs-parent="#ProductDetailsAccordion">
                                             <div class="accordion-body">
                                                 <div class="row">
                                                     <div class="col-md-6">
@@ -1156,35 +1156,35 @@
                                                                     <th class="text-muted" width="40%">
                                                                         Supplier</th>
                                                                     <td class="text-primary fw-medium">
-                                                                        {{ $watchDetails->supplier_name }}
+                                                                        {{ $ProductDetails->supplier_name }}
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <th class="text-muted">
                                                                         Email</th>
                                                                     <td class="text-primary fw-medium">
-                                                                        {{ $watchDetails->email ?: 'N/A' }}
+                                                                        {{ $ProductDetails->email ?: 'N/A' }}
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <th class="text-muted">
                                                                         Phone</th>
                                                                     <td class="text-primary fw-medium">
-                                                                        {{ $watchDetails->contact ?: 'N/A' }}
+                                                                        {{ $ProductDetails->contact ?: 'N/A' }}
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <th class="text-muted">
                                                                         Barcode</th>
                                                                     <td class="text-primary fw-medium">
-                                                                        {{ $watchDetails->barcode }}
+                                                                        {{ $ProductDetails->barcode }}
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <th class="text-muted">
                                                                         Warranty</th>
                                                                     <td class="text-primary fw-medium">
-                                                                        {{ $watchDetails->warranty }}
+                                                                        {{ $ProductDetails->warranty }}
                                                                     </td>
                                                                 </tr>
                                                             </tbody>
@@ -1201,7 +1201,7 @@
                                                                         Supplier Price</p>
                                                                     <h5 class="card-title">
                                                                         Rs.
-                                                                        {{ number_format($watchDetails->supplier_price, 2) }}
+                                                                        {{ number_format($ProductDetails->supplier_price, 2) }}
                                                                     </h5>
                                                                 </div>
                                                             </div>
@@ -1214,13 +1214,13 @@
                                                                         Selling Price</p>
                                                                     <h5 class="card-title text-primary">
                                                                         Rs.
-                                                                        {{ number_format($watchDetails->selling_price, 2) }}
+                                                                        {{ number_format($ProductDetails->selling_price, 2) }}
                                                                     </h5>
                                                                 </div>
                                                             </div>
                                                         </div>
 
-                                                        @if ($watchDetails->discount_price > 0)
+                                                        @if ($ProductDetails->discount_price > 0)
                                                             <div class="card border-success bg-success bg-opacity-10">
                                                                 <div
                                                                     class="card-header bg-success bg-opacity-25 border-success">
@@ -1236,21 +1236,21 @@
                                                                             Amount</p>
                                                                         <h5 class="card-title text-success">
                                                                             Rs.
-                                                                            {{ number_format($watchDetails->discount_price, 2) }}
+                                                                            {{ number_format($ProductDetails->discount_price, 2) }}
                                                                         </h5>
                                                                     </div>
                                                                     <div class="progress mt-2" style="height: 10px;">
                                                                         <div class="progress-bar bg-success"
                                                                             role="progressbar"
-                                                                            style="width: {{ min(($watchDetails->discount_price / $watchDetails->selling_price) * 100, 100) }}%"
-                                                                            aria-valuenow="{{ ($watchDetails->discount_price / $watchDetails->selling_price) * 100 }}"
+                                                                            style="width: {{ min(($ProductDetails->discount_price / $ProductDetails->selling_price) * 100, 100) }}%"
+                                                                            aria-valuenow="{{ ($ProductDetails->discount_price / $ProductDetails->selling_price) * 100 }}"
                                                                             aria-valuemin="0" aria-valuemax="100">
                                                                         </div>
                                                                     </div>
                                                                     <div class="d-flex justify-content-between mt-1">
                                                                         <small class="text-muted">0%</small>
                                                                         <small class="text-muted">Save
-                                                                            {{ number_format(($watchDetails->discount_price / $watchDetails->selling_price) * 100, 0) }}%</small>
+                                                                            {{ number_format(($ProductDetails->discount_price / $ProductDetails->selling_price) * 100, 0) }}%</small>
                                                                         <small class="text-muted">100%</small>
                                                                     </div>
                                                                 </div>
@@ -1272,7 +1272,7 @@
                     </div>
                 </div>
             </div>
-            <!-- View Watch Modal End-->
+            <!-- View Product Modal End-->
 
             <!-- Add New Customer Modal -->
             <div wire:ignore.self class="modal fade" id="addCustomerModal" tabindex="-1"
@@ -1399,10 +1399,9 @@
                                 <div class="receipt-container">
                                     <!-- Receipt Header -->
                                     <div class="text-center mb-4">
-                                        <h3 class="mb-0">NEW WATCH COMPANY ( MR TRADING )</h3>
-                                        <p class="mb-0 text-muted small">NO 44 ,DOOLMALA ,THIHARIYA</p>
-                                        <p class="mb-0 text-muted small">Phone: (033) 228 7437 |
-                                            Email:hakeem9053@gmail.com</p>
+                                        <h3 class="mb-0">ZAHARA INTERNATIONAL</h3>
+                                        <p class="mb-0 text-muted small">NO 14/A, YATIYANA ROAD,HORAGOLLA,NITTAMBUWA</p>
+                                        <p class="mb-0 text-muted small">Phone: (077) 3751785 | (033) 2297739 | Email: zahara.international@yahoo.com</p>
                                         <h4 class="mt-3 border-bottom border-2 pb-2">SALES RECEIPT</h4>
                                     </div>
 
@@ -1456,8 +1455,8 @@
                                                 @foreach ($receipt->items as $index => $item)
                                                     <tr>
                                                         <td>{{ $index + 1 }}</td>
-                                                        <td>{{ $item->watch_name }}</td>
-                                                        <td>{{ $item->watch_code }}</td>
+                                                        <td>{{ $item->Product_name }}</td>
+                                                        <td>{{ $item->Product_code }}</td>
                                                         <td>Rs.{{ number_format($item->unit_price, 2) }}</td>
                                                         <td>{{ $item->quantity }}</td>
                                                         <td>Rs.{{ number_format($item->discount * $item->quantity, 2) }}
@@ -1694,10 +1693,10 @@
                             }
                             
                             // Update Livewire model
-                            const watchId = this.dataset.watchId;
-                            if (watchId) {
-                                @this.set(`quantities.${watchId}`, value);
-                                @this.call('validateQuantity', watchId);
+                            const ProductId = this.dataset.ProductId;
+                            if (ProductId) {
+                                @this.set(`quantities.${ProductId}`, value);
+                                @this.call('validateQuantity', ProductId);
                             }
                             
                             // Remove visual warning after correction

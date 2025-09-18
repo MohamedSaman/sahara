@@ -2,10 +2,10 @@
     <div class="container-fluid">
         <div class="card shadow-sm">
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap bg-light">
-                <h4 class="card-title mb-2 mb-md-0">Watch Strap Color List</h4>
+                <h4 class="card-title mb-2 mb-md-0">Product Color List</h4>
                 <div class="card-tools">
                     <button class="btn btn-primary" wire:click="createStrapColor">
-                        <i class="bi bi-plus-circle me-1"></i> Create Strap Color
+                        <i class="bi bi-plus-circle me-1"></i> CreateProduct Color
                     </button>
                 </div>
             </div>
@@ -13,8 +13,8 @@
                 <table class="table table-bordered table-hover table-responsive">
                     <thead>
                         <tr>
-                            <th class="text-center">#</th>
-                            <th class="text-center">Strap Color Name</th>
+                            <th class="text-center">No</th>
+                            <th class="text-center">Product Color Name</th>
                             <th class="text-center">Action</th>
                         </tr>
                     </thead>
@@ -39,7 +39,7 @@
                         @else
                             <td colspan="4" class="text-center">
                                 <div class="alert alert-primary bg-opacity-10 my-2">
-                                    <i class="bi bi-info-circle me-2"></i> No watches Strap Colors found.
+                                    <i class="bi bi-info-circle me-2"></i> No Products Strap Colors found.
                                 </div>
                             </td>
                         @endif

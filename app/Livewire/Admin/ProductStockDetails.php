@@ -1,0 +1,84 @@
+<?php
+
+namespace App\Livewire\Admin;
+use Exception;
+use Livewire\Component;
+use Livewire\Attributes\Layout;
+use Livewire\Attributes\Title;
+use App\Models\ProductStock;
+use App\Models\ProductDetails;
+
+#[Layout('components.layouts.admin')]
+#[Title('Product Stock Details')]
+class ProductStockDetails extends Component
+{
+    public function render()
+    {
+        $ProductStocks = ProductStock::join('Product_details', 'Product_stocks.Product_id', '=', 'Product_details.id')
+            ->select('Product_stocks.*', 'Product_details.name as Product_name', 'Product_details.brand as Product_brand','Product_details.model as Product_model', 'Product_details.code as Product_code', 'Product_details.image as Product_image')
+            ->get();
+        return view('livewire.admin.Product-stock-details',[
+            'ProductStocks'=> $ProductStocks
+        ]);
+    }
+
+    public function exportToCSV()
+    {
+        // Get data
+        $ProductStocks = ProductStock::join('Product_details', 'Product_stocks.Product_id', '=', 'Product_details.id')
+            ->select('Product_details.name', 'Product_details.code', 'Product_details.brand', 'Product_details.model', 
+                    'Product_stocks.total_stock', 'Product_stocks.available_stock', 
+                    'Product_stocks.sold_count', 'Product_stocks.damage_stock')
+            ->get();
+
+        if ($ProductStocks->isEmpty()) {
+            $this->dispatch('banner-message', [
+                'style' => 'danger',
+                'message' => 'No data available to export'
+            ]);
+            return;
+        }
+        
+        // Generate filename with date
+        $fileName = 'Product_stock_' . date('Y-m-d_His') . '.csv';
+        
+        // Create CSV content with headers
+        $headers = [
+            'Name',
+            'Code',
+            'Brand',
+            'Model',
+            'Total Stock',
+            'Available Stock',
+            'Sold Count',
+            'Damage Stock'
+        ];
+        
+        $callback = function() use($ProductStocks, $headers) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $headers);
+            
+            foreach ($ProductStocks as $stock) {
+                $row = [
+                    $stock->name ?? '-',
+                    $stock->code ?? '-',
+                    $stock->brand ?? '-',
+                    $stock->model ?? '-',
+                    $stock->total_stock ?? '0',
+                    $stock->available_stock ?? '0',
+                    $stock->sold_count ?? '0',
+                    $stock->damage_stock ?? '0'
+                ];
+                fputcsv($file, $row);
+            }
+            
+            fclose($file);
+        };
+        
+        // Create response with headers for browser download
+        return response()->stream($callback, 200, [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"$fileName\"",
+        ]);
+    }
+}

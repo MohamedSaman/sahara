@@ -15,7 +15,7 @@ class StaffStockOverview extends Component
     public $selectedSaleId = null;
     public $showSaleDetails = false;
     public $searchQuery = '';
-    public $activeView = 'watches'; // Default view: 'watches' or 'batches'
+    public $activeView = 'Productes'; // Default view: 'Productes' or 'batches'
 
     public $totalInventory = 0;
     public $soldInventory = 0;
@@ -42,7 +42,7 @@ class StaffStockOverview extends Component
     public function switchView($view)
     {
         $this->activeView = $view;
-        if ($view === 'watches') {
+        if ($view === 'Productes') {
             $this->showSaleDetails = false;
         }
     }
@@ -73,45 +73,45 @@ class StaffStockOverview extends Component
        
         // Modified to explicitly include all statuses including completed
         $staffProducts = StaffProduct::where('staff_id', auth()->id())
-            ->with(['watch', 'staffSale.admin'])
+            ->with(['Product', 'staffSale.admin'])
             ->get();
 
-        // Group products by watch_id and aggregate quantities
-        $watchGroups = $staffProducts->groupBy('watch_id');
-        $watches = collect();
+        // Group products by Product_id and aggregate quantities
+        $ProductGroups = $staffProducts->groupBy('Product_id');
+        $Productes = collect();
         
         
-        // Process watch groups
-        foreach ($watchGroups as $watchId => $products) {
-            $watch = $products->first()->watch;
-            if (!$watch) continue;
+        // Process Product groups
+        foreach ($ProductGroups as $ProductId => $products) {
+            $Product = $products->first()->Product;
+            if (!$Product) continue;
             
-            $watchTotalQuantity = $products->sum('quantity');
-            $watchSoldQuantity = $products->sum('sold_quantity');
-            $watchTotalValue = $products->sum('total_value');
-            $watchSoldValue = $products->sum('sold_value');
+            $ProductTotalQuantity = $products->sum('quantity');
+            $ProductSoldQuantity = $products->sum('sold_quantity');
+            $ProductTotalValue = $products->sum('total_value');
+            $ProductSoldValue = $products->sum('sold_value');
             
             // Filter by search query if any
             if (!empty($this->searchQuery)) {
                 $query = strtolower($this->searchQuery);
-                if (!str_contains(strtolower($watch->name ?? ''), $query) && 
-                    !str_contains(strtolower($watch->code ?? ''), $query) && 
-                    !str_contains(strtolower($watch->brand ?? ''), $query)) {
+                if (!str_contains(strtolower($Product->name ?? ''), $query) && 
+                    !str_contains(strtolower($Product->code ?? ''), $query) && 
+                    !str_contains(strtolower($Product->brand ?? ''), $query)) {
                     continue;
                 }
             }
             
-            $watches->push([
-                'watch' => $watch,
-                'total_quantity' => $watchTotalQuantity,
-                'sold_quantity' => $watchSoldQuantity,
-                'remaining_quantity' => $watchTotalQuantity - $watchSoldQuantity,
-                'total_value' => $watchTotalValue,
-                'sold_value' => $watchSoldValue,
-                'progress_percentage' => $watchTotalQuantity > 0 ? 
-                    round(($watchSoldQuantity / $watchTotalQuantity) * 100, 1) : 0,
-                'status' => $watchSoldQuantity == 0 ? 'pending' : 
-                    ($watchSoldQuantity < $watchTotalQuantity ? 'partial' : 'completed')
+            $Productes->push([
+                'Product' => $Product,
+                'total_quantity' => $ProductTotalQuantity,
+                'sold_quantity' => $ProductSoldQuantity,
+                'remaining_quantity' => $ProductTotalQuantity - $ProductSoldQuantity,
+                'total_value' => $ProductTotalValue,
+                'sold_value' => $ProductSoldValue,
+                'progress_percentage' => $ProductTotalQuantity > 0 ? 
+                    round(($ProductSoldQuantity / $ProductTotalQuantity) * 100, 1) : 0,
+                'status' => $ProductSoldQuantity == 0 ? 'pending' : 
+                    ($ProductSoldQuantity < $ProductTotalQuantity ? 'partial' : 'completed')
             ]);
         }
         
@@ -120,7 +120,7 @@ class StaffStockOverview extends Component
         $batchProducts = collect();
         
         if ($this->selectedSaleId) {
-            $selectedSale = StaffSale::with(['admin', 'products.watch'])
+            $selectedSale = StaffSale::with(['admin', 'products.Product'])
                 ->find($this->selectedSaleId);
                 
             if ($selectedSale) {
@@ -130,9 +130,9 @@ class StaffStockOverview extends Component
                 if (!empty($this->searchQuery)) {
                     $query = strtolower($this->searchQuery);
                     $batchProducts = $batchProducts->filter(function($product) use ($query) {
-                        return str_contains(strtolower($product->watch->name ?? ''), $query) || 
-                               str_contains(strtolower($product->watch->code ?? ''), $query) || 
-                               str_contains(strtolower($product->watch->brand ?? ''), $query);
+                        return str_contains(strtolower($product->Product->name ?? ''), $query) || 
+                               str_contains(strtolower($product->Product->code ?? ''), $query) || 
+                               str_contains(strtolower($product->Product->brand ?? ''), $query);
                     });
                 }
             }
@@ -153,7 +153,7 @@ class StaffStockOverview extends Component
         
         return view('livewire.staff.staff-stock-overview', [
             'staffSales' => $staffSales,
-            'watches' => $watches,
+            'Productes' => $Productes,
             'selectedSale' => $selectedSale,
             'products' => $batchProducts,
             'totalAssigned' => $staffstockTotalQuantity,

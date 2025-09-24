@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="card shadow-sm">
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap bg-light">
-                <h4 class="card-title mb-2 mb-md-0">Watch Glass Type List</h4>
+                <h4 class="card-title mb-2 mb-md-0">Product Glass Type List</h4>
                 <div class="card-tools">
                     <button class="btn btn-primary" wire:click="createGlassType">
                         <i class="bi bi-plus-circle me-1"></i> Create Glass Type

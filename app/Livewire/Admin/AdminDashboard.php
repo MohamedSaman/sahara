@@ -46,13 +46,26 @@ class AdminDashboard extends Component
     public $brandSales = [];
     public $staffSales = [];
 
+    // Analytics data
+    public $monthlySalesData = [];
+    public $monthlyRevenueData = [];
+    public $invoiceStatusData = [];
+    public $paymentTrendsData = [];
+    public $topPerformingMonths = [];
+
     public $selectedReport = '';
     public $salesReport = [];
+    public $salesReportTotal = 0;
     public $salaryReport = [];
+    public $salaryReportTotal = 0;
     public $inventoryReport = [];
+    public $inventoryReportTotal = 0;
     public $staffReport = [];
+    public $staffReportTotal = 0;
     public $paymentsReport = [];
+    public $paymentsReportTotal = 0;
     public $attendanceReport = [];
+    public $attendanceReportTotal = 0;
 
     public $activeTab = 'overview';
     public $reportStartDate;
@@ -191,6 +204,89 @@ class AdminDashboard extends Component
 
         // Fetch staff sales data
         $this->loadStaffSales();
+
+        // Load analytics data
+        $this->loadAnalyticsData();
+    }
+
+    public function loadAnalyticsData()
+    {
+        // Get monthly sales data for the last 12 months
+        $this->monthlySalesData = DB::table('sales')
+            ->select(
+                DB::raw('YEAR(created_at) as year'),
+                DB::raw('MONTH(created_at) as month'),
+                DB::raw('COUNT(*) as total_invoices'),
+                DB::raw('SUM(total_amount) as total_sales'),
+                DB::raw('SUM(total_amount - due_amount) as revenue'),
+                DB::raw('SUM(due_amount) as due_amount')
+            )
+            ->where('created_at', '>=', now()->subMonths(12))
+            ->groupBy('year', 'month')
+            ->orderBy('year', 'asc')
+            ->orderBy('month', 'asc')
+            ->get()
+            ->map(function($item) {
+                return [
+                    'year' => $item->year,
+                    'month' => $item->month,
+                    'month_name' => date('M Y', mktime(0, 0, 0, $item->month, 1, $item->year)),
+                    'total_invoices' => $item->total_invoices,
+                    'total_sales' => $item->total_sales,
+                    'revenue' => $item->revenue,
+                    'due_amount' => $item->due_amount
+                ];
+            })
+            ->toArray();
+
+        // Get invoice status distribution
+        $this->invoiceStatusData = DB::table('sales')
+            ->select(
+                'payment_status',
+                DB::raw('COUNT(*) as count'),
+                DB::raw('SUM(total_amount) as amount')
+            )
+            ->groupBy('payment_status')
+            ->get()
+            ->map(function($item) {
+                return [
+                    'payment_status' => $item->payment_status,
+                    'count' => $item->count,
+                    'amount' => $item->amount
+                ];
+            })
+            ->toArray();
+
+        // Get payment trends (last 6 months)
+        $this->paymentTrendsData = DB::table('payments')
+            ->select(
+                DB::raw('YEAR(payment_date) as year'),
+                DB::raw('MONTH(payment_date) as month'),
+                DB::raw('COUNT(*) as payment_count'),
+                DB::raw('SUM(amount) as total_payments')
+            )
+            ->where('payment_date', '>=', now()->subMonths(6))
+            ->groupBy('year', 'month')
+            ->orderBy('year', 'asc')
+            ->orderBy('month', 'asc')
+            ->get()
+            ->map(function($item) {
+                return [
+                    'year' => $item->year,
+                    'month' => $item->month,
+                    'month_name' => date('M Y', mktime(0, 0, 0, $item->month, 1, $item->year)),
+                    'payment_count' => $item->payment_count,
+                    'total_payments' => $item->total_payments
+                ];
+            })
+            ->toArray();
+
+        // Get top performing months
+        $this->topPerformingMonths = collect($this->monthlySalesData)
+            ->sortByDesc('revenue')
+            ->take(3)
+            ->values()
+            ->toArray();
     }
 
     public function loadRecentSales()
@@ -304,16 +400,22 @@ class AdminDashboard extends Component
 
         if ($this->selectedReport === 'sales') {
             $this->salesReport = $this->getSalesReport($this->reportStartDate, $this->reportEndDate);
+            $this->salesReportTotal = collect($this->salesReport)->sum('total_amount');
         } elseif ($this->selectedReport === 'salary') {
             $this->salaryReport = $this->getSalaryReport($this->reportStartDate, $this->reportEndDate);
+            $this->salaryReportTotal = collect($this->salaryReport)->sum('net_salary');
         } elseif ($this->selectedReport === 'inventory') {
             $this->inventoryReport = $this->getInventoryReport($this->reportStartDate, $this->reportEndDate);
+            $this->inventoryReportTotal = collect($this->inventoryReport)->sum('available_stock');
         } elseif ($this->selectedReport === 'staff') {
             $this->staffReport = $this->getStaffReport($this->reportStartDate, $this->reportEndDate);
+            $this->staffReportTotal = collect($this->staffReport)->sum('total_sales');
         } elseif ($this->selectedReport === 'payments') {
             $this->paymentsReport = $this->getPaymentsReport($this->reportStartDate, $this->reportEndDate);
+            $this->paymentsReportTotal = collect($this->paymentsReport)->sum('amount');
         } elseif ($this->selectedReport === 'attendance') {
             $this->attendanceReport = $this->getAttendanceReport($this->reportStartDate, $this->reportEndDate);
+            $this->attendanceReportTotal = collect($this->attendanceReport)->count();
         }
 
         $this->activeTab = $currentTab;
@@ -328,27 +430,27 @@ class AdminDashboard extends Component
         switch ($this->selectedReport) {
             case 'sales':
                 $data = $this->salesReport;
-                $export = new \App\Exports\SalesReportExport($data);
+                $export = new \App\Exports\SalesReportExport($data, $this->salesReportTotal);
                 break;
             case 'salary':
                 $data = $this->salaryReport;
-                $export = new \App\Exports\SalaryReportExport($data);
+                $export = new \App\Exports\SalaryReportExport($data, $this->salaryReportTotal);
                 break;
             case 'inventory':
                 $data = $this->inventoryReport;
-                $export = new \App\Exports\InventoryReportExport($data);
+                $export = new \App\Exports\InventoryReportExport($data, $this->inventoryReportTotal);
                 break;
             case 'staff':
                 $data = $this->staffReport;
-                $export = new \App\Exports\StaffReportExport($data);
+                $export = new \App\Exports\StaffReportExport($data, $this->staffReportTotal);
                 break;
             case 'payments':
                 $data = $this->paymentsReport;
-                $export = new \App\Exports\PaymentsReportExport($data);
+                $export = new \App\Exports\PaymentsReportExport($data, $this->paymentsReportTotal);
                 break;
             case 'attendance':
                 $data = $this->attendanceReport;
-                $export = new \App\Exports\AttendanceReportExport($data);
+                $export = new \App\Exports\AttendanceReportExport($data, $this->attendanceReportTotal);
                 break;
             default:
                 return;
@@ -419,6 +521,18 @@ class AdminDashboard extends Component
 
     public function render()
     {
-        return view('livewire.admin.admin-dashboard');
+        return view('livewire.admin.admin-dashboard', [
+            'salesReportTotal' => $this->salesReportTotal,
+            'salaryReportTotal' => $this->salaryReportTotal,
+            'inventoryReportTotal' => $this->inventoryReportTotal,
+            'staffReportTotal' => $this->staffReportTotal,
+            'paymentsReportTotal' => $this->paymentsReportTotal,
+            'attendanceReportTotal' => $this->attendanceReportTotal,
+            'monthlySalesData' => $this->monthlySalesData,
+            'monthlyRevenueData' => $this->monthlyRevenueData,
+            'invoiceStatusData' => $this->invoiceStatusData,
+            'paymentTrendsData' => $this->paymentTrendsData,
+            'topPerformingMonths' => $this->topPerformingMonths,
+        ]);
     }
 }

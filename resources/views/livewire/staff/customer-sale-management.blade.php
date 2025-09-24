@@ -589,7 +589,7 @@
                                                     <div class="d-flex align-items-center">
                                                         <div class="product-image-container me-3">
                                                             @if (isset($item['image']) && $item['image'])
-                                                                <img src="{{ asset('public/storage/' . $item['image']) }}"
+                                                                <img src="{{ asset('storage/' . $item['image']) }}"
                                                                     alt="{{ $item['Product_name'] }}" class="img-fluid"
                                                                     style="width: 100%; height: 100%; object-fit: cover;">
                                                             @else

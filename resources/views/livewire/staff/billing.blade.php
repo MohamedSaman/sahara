@@ -77,7 +77,7 @@
                                                     <!-- Product Image - Full height -->
                                                   <div class="product-image me-3" style="min-width: 60px;">
                                                         @if ($result->image)
-                                                            <img src="{{ asset('public/storage/' . $result->image) }}"
+                                                            <img src="{{ asset('storage/' . $result->image) }}"
                                                                 alt="{{ $result->name }}" class="img-fluid rounded"
                                                                 style="width: 60px; height: 60px; object-fit: cover;">
                                                         @else
@@ -164,7 +164,7 @@
                                                 <div class="d-flex px-2 py-1">
                                                     <div>
                                                         @if ($item['image'])
-                                                            <img src="{{ asset('public/storage/' . $item['image']) }}"
+                                                            <img src="{{ asset('storage/' . $item['image']) }}"
                                                                 class="avatar avatar-sm me-3"
                                                                 alt="{{ $item['name'] }}">
                                                         @else
@@ -766,7 +766,7 @@
                                             <div class="col-md-4 border-end">
                                                 <div class="position-relative h-100">
                                                     @if ($ProductDetails->image)
-                                                        <img src="{{ asset('public/storage/' . $ProductDetails->image) }}"
+                                                        <img src="{{ asset('storage/' . $ProductDetails->image) }}"
                                                             alt="{{ $ProductDetails->name }}"
                                                             class="img-fluid rounded-start h-100 w-100 object-fit-cover">
                                                     @else

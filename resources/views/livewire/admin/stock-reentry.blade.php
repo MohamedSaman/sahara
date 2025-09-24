@@ -4,7 +4,7 @@
     <!-- Search Bar -->
    <div class="mb-3">
                                 <input type="text" class="form-control form-control-sm"
-                                    placeholder="Search watches..." id="watchSearchInput">
+                                    placeholder="Search Productes..." id="ProductSearchInput">
                             </div>
 
     <!-- Item Grid -->
@@ -16,7 +16,7 @@
                 <div class="row g-2 g-md-3 staff-products">
                     @foreach ($products as $product)
                         @php
-                            $watch = $product->watchDetail;
+                            $Product = $product->ProductDetail;
                             $available = $product->quantity - $product->sold_quantity;
                             $percentSold = $product->quantity > 0 ? ($product->sold_quantity / $product->quantity) * 100 : 0;
 
@@ -37,21 +37,21 @@
                                 <div class="row g-0">
                                     <div class="col-4">
                                         <div class="p-2 p-md-3 h-100 d-flex align-items-center justify-content-center bg-light rounded-start">
-                                            @if ($watch && $watch->image)
-                                                <img src="{{ asset('public/storage/' . $watch->image) }}" alt="{{ $watch->name }}" class="img-fluid" style="max-height: 80px; object-fit: contain;">
+                                            @if ($Product && $Product->image)
+                                                <img src="{{ asset('storage/' . $Product->image) }}" alt="{{ $Product->name }}" class="img-fluid" style="max-height: 80px; object-fit: contain;">
                                                 
                                             @else
                                                 <div class="text-center text-muted">
-                                                    <i class="bi bi-watch fs-3 fs-md-1"></i>
+                                                    <i class="bi bi-Product fs-3 fs-md-1"></i>
                                                 </div>
                                             @endif
                                         </div>
                                     </div>
                                     <div class="col-8">
                                         <div class="card-body p-2 p-md-3 d-flex flex-column">
-                                            <h6 class="card-title mb-1 fw-bold fs-6">{{ $watch->brand ?? 'Brand' }}</h6>
-                                            <p class="card-text small mb-0">{{ $watch->name ?? 'N/A' }} {{ $watch->model ?? '' }}</p>
-                                            <p class="card-text small text-muted mb-2">Code: {{ $watch->code ?? 'N/A' }}</p>
+                                            <h6 class="card-title mb-1 fw-bold fs-6">{{ $Product->brand ?? 'Brand' }}</h6>
+                                            <p class="card-text small mb-0">{{ $Product->name ?? 'N/A' }} {{ $Product->model ?? '' }}</p>
+                                            <p class="card-text small text-muted mb-2">Code: {{ $Product->code ?? 'N/A' }}</p>
 
                                             <div class="d-flex align-items-center justify-content-between mt-auto flex-wrap gap-1">
                                                 <div class="small">
@@ -93,11 +93,11 @@
                 <div class="card mt-3 mt-lg-0">
                     <div class="card-header d-flex align-items-center justify-content-between">
                         <div>
-                            <strong>Edit Stock: </strong> {{ $selectedProduct->watchDetail->name ?? 'Selected Product' }}
-                            <p class="card-text small text-muted mb-0">Code: {{ $selectedProduct->watchDetail->code ?? 'N/A' }}</p>
+                            <strong>Edit Stock: </strong> {{ $selectedProduct->ProductDetail->name ?? 'Selected Product' }}
+                            <p class="card-text small text-muted mb-0">Code: {{ $selectedProduct->ProductDetail->code ?? 'N/A' }}</p>
                         </div>
-                        @if ($selectedProduct->watchDetail && $selectedProduct->watchDetail->image)
-                            <img src="{{ asset('public/storage/' . $selectedProduct->watchDetail->image) }}" alt="{{ $selectedProduct->watchDetail->name }}" class="img-fluid ms-3" style="max-height: 60px; object-fit: contain;">
+                        @if ($selectedProduct->ProductDetail && $selectedProduct->ProductDetail->image)
+                            <img src="{{ asset('storage/' . $selectedProduct->ProductDetail->image) }}" alt="{{ $selectedProduct->ProductDetail->name }}" class="img-fluid ms-3" style="max-height: 60px; object-fit: contain;">
                         @endif
                     </div>
                     <div class="card-body">
@@ -123,7 +123,7 @@
 @push('scripts')
 <script>
     function filterProducts() {
-        const searchInput = document.getElementById('watchSearchInput');
+        const searchInput = document.getElementById('ProductSearchInput');
         if (!searchInput) return;
         const searchValue = searchInput.value.toLowerCase();
         document.querySelectorAll('.staff-product-item').forEach(item => {
@@ -143,7 +143,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        const searchInput = document.getElementById('watchSearchInput');
+        const searchInput = document.getElementById('ProductSearchInput');
         if (searchInput) {
             searchInput.addEventListener('input', filterProducts);
         }
@@ -154,9 +154,9 @@
         filterProducts();
     });
     document.addEventListener('livewire:message.processed', function() {
-    const searchInput = document.getElementById('watchSearchInput');
+    const searchInput = document.getElementById('ProductSearchInput');
     if (searchInput) {
-        searchInput.value = localStorage.getItem('watchSearchValue') || '';
+        searchInput.value = localStorage.getItem('ProductSearchValue') || '';
         filterProducts();
     }
 });

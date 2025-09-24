@@ -8,9 +8,9 @@ use App\Models\Payment;
 use Livewire\Component;
 use App\Models\Customer;
 use App\Models\SaleItem;
-use App\Models\WatchPrice;
-use App\Models\WatchStock;
-use App\Models\WatchDetail;
+use App\Models\ProductPrice;
+use App\Models\ProductStock;
+use App\Models\ProductDetail;
 use App\Models\StaffProduct;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Layout;
@@ -31,7 +31,7 @@ class Billing extends Component
     public $cart = [];
     public $quantities = [];
     public $discounts = [];
-    public $watchDetails = null;
+    public $ProductDetails = null;
     public $subtotal = 0;
     public $totalDiscount = 0;
     public $grandTotal = 0;
@@ -93,16 +93,16 @@ class Billing extends Component
 public function updatedSearch()
 {
     if (strlen($this->search) >= 2) {
-        $this->searchResults = WatchDetail::join('staff_products', 'staff_products.watch_id', '=', 'watch_details.id')
+        $this->searchResults = ProductDetail::join('staff_products', 'staff_products.Product_id', '=', 'Product_details.id')
             ->join('staff_sales', 'staff_sales.id', '=', 'staff_products.staff_sale_id')
             ->select(
-                'watch_details.id',
-                'watch_details.name',
-                'watch_details.code',
-                'watch_details.model',
-                'watch_details.brand',
-                'watch_details.barcode',
-                'watch_details.image', // ✅ Fixed: include image field
+                'Product_details.id',
+                'Product_details.name',
+                'Product_details.code',
+                'Product_details.model',
+                'Product_details.brand',
+                'Product_details.barcode',
+                'Product_details.image', // ✅ Fixed: include image field
                 DB::raw('SUM(staff_products.quantity - staff_products.sold_quantity) as available_stock'),
                 DB::raw('MIN(staff_products.unit_price) as selling_price'),
                 DB::raw('MIN(staff_products.discount_per_unit) as discount_price'),
@@ -112,20 +112,20 @@ public function updatedSearch()
             ->where('staff_products.status', '!=', 'completed')
             ->whereRaw('staff_products.quantity > staff_products.sold_quantity')
             ->where(function($query) {
-                $query->where('watch_details.code', 'like', '%' . $this->search . '%')
-                    ->orWhere('watch_details.model', 'like', '%' . $this->search . '%')
-                    ->orWhere('watch_details.barcode', 'like', '%' . $this->search . '%')
-                    ->orWhere('watch_details.brand', 'like', '%' . $this->search . '%')
-                    ->orWhere('watch_details.name', 'like', '%' . $this->search . '%');
+                $query->where('Product_details.code', 'like', '%' . $this->search . '%')
+                    ->orWhere('Product_details.model', 'like', '%' . $this->search . '%')
+                    ->orWhere('Product_details.barcode', 'like', '%' . $this->search . '%')
+                    ->orWhere('Product_details.brand', 'like', '%' . $this->search . '%')
+                    ->orWhere('Product_details.name', 'like', '%' . $this->search . '%');
             })
             ->groupBy(
-                'watch_details.id',
-                'watch_details.name',
-                'watch_details.code',
-                'watch_details.model',
-                'watch_details.brand',
-                'watch_details.barcode',
-                'watch_details.image' // ✅ Group by image too (required in strict SQL modes)
+                'Product_details.id',
+                'Product_details.name',
+                'Product_details.code',
+                'Product_details.model',
+                'Product_details.brand',
+                'Product_details.barcode',
+                'Product_details.image' // ✅ Group by image too (required in strict SQL modes)
             )
             ->having('available_stock', '>', 0)
             ->take(50)
@@ -138,71 +138,71 @@ public function updatedSearch()
  //add cart modify 6/24/2025
 
     /**
-     * Add a watch to the cart
+     * Add a Product to the cart
      *
-     * @param int $watchId Watch ID
+     * @param int $ProductId Product ID
      */
-public function addToCart($watchId)
+public function addToCart($ProductId)
 {
     // Get total available stock across all assigned entries for this product
-    $watch = WatchDetail::join('staff_products', 'staff_products.watch_id', '=', 'watch_details.id')
-        ->where('watch_details.id', $watchId)
+    $Product = ProductDetail::join('staff_products', 'staff_products.Product_id', '=', 'Product_details.id')
+        ->where('Product_details.id', $ProductId)
         ->where('staff_products.staff_id', auth()->id())
         ->where('staff_products.status', '!=', 'completed')
         ->whereRaw('staff_products.quantity > staff_products.sold_quantity')
         ->select(
-            'watch_details.id',
-            'watch_details.name',
-            'watch_details.code',
-            'watch_details.model',
-            'watch_details.brand',
-            'watch_details.image',
+            'Product_details.id',
+            'Product_details.name',
+            'Product_details.code',
+            'Product_details.model',
+            'Product_details.brand',
+            'Product_details.image',
             DB::raw('SUM(staff_products.quantity - staff_products.sold_quantity) as available_stock'),
             DB::raw('MIN(staff_products.unit_price) as selling_price'),
             DB::raw('MIN(staff_products.discount_per_unit) as discount_price'),
             DB::raw('MIN(staff_products.id) as staff_product_id')
         )
         ->groupBy(
-            'watch_details.id',
-            'watch_details.name',
-            'watch_details.code',
-            'watch_details.model',
-            'watch_details.brand',
-            'watch_details.image'
+            'Product_details.id',
+            'Product_details.name',
+            'Product_details.code',
+            'Product_details.model',
+            'Product_details.brand',
+            'Product_details.image'
         )
         ->having('available_stock', '>', 0)
         ->first();
 
-    if (!$watch || $watch->available_stock <= 0) {
+    if (!$Product || $Product->available_stock <= 0) {
         $this->dispatch('showToast', ['type' => 'danger', 'message' => 'This product is not available or not assigned to you.']);
         return;
     }
 
-    $existingItem = collect($this->cart)->firstWhere('id', $watchId);
+    $existingItem = collect($this->cart)->firstWhere('id', $ProductId);
 
     if ($existingItem) {
-        if (($this->quantities[$watchId] + 1) > $watch->available_stock) {
-            $this->dispatch('showToast', ['type' => 'warning', 'message' => "Maximum available quantity ({$watch->available_stock}) reached."]);
+        if (($this->quantities[$ProductId] + 1) > $Product->available_stock) {
+            $this->dispatch('showToast', ['type' => 'warning', 'message' => "Maximum available quantity ({$Product->available_stock}) reached."]);
             return;
         }
-        $this->quantities[$watchId]++;
+        $this->quantities[$ProductId]++;
     } else {
-        $discountPrice = $watch->discount_price ?? 0;
-        $this->cart[$watchId] = [
-            'id' => $watch->id,
-            'staff_product_id' => $watch->staff_product_id,
-            'code' => $watch->code,
-            'name' => $watch->name,
-            'model' => $watch->model,
-            'brand' => $watch->brand,
-            'image' => $watch->image,
-            'price' => $watch->selling_price ?? 0,
+        $discountPrice = $Product->discount_price ?? 0;
+        $this->cart[$ProductId] = [
+            'id' => $Product->id,
+            'staff_product_id' => $Product->staff_product_id,
+            'code' => $Product->code,
+            'name' => $Product->name,
+            'model' => $Product->model,
+            'brand' => $Product->brand,
+            'image' => $Product->image,
+            'price' => $Product->selling_price ?? 0,
             'discountPrice' => $discountPrice,
-            'inStock' => $watch->available_stock,
+            'inStock' => $Product->available_stock,
         ];
 
-        $this->quantities[$watchId] = 1;
-        $this->discounts[$watchId] = $discountPrice;
+        $this->quantities[$ProductId] = 1;
+        $this->discounts[$ProductId] = $discountPrice;
     }
 
     $this->search = '';
@@ -213,27 +213,27 @@ public function addToCart($watchId)
     /**
      * Validate and restrict quantity input
      *
-     * @param int $watchId Watch ID
+     * @param int $ProductId Product ID
      */
-    public function validateQuantity($watchId)
+    public function validateQuantity($ProductId)
     {
-        if (!isset($this->cart[$watchId]) || !isset($this->quantities[$watchId])) {
+        if (!isset($this->cart[$ProductId]) || !isset($this->quantities[$ProductId])) {
             return;
         }
         
-        $maxAvailable = $this->cart[$watchId]['inStock'];
-        $currentQuantity = (int)$this->quantities[$watchId];
+        $maxAvailable = $this->cart[$ProductId]['inStock'];
+        $currentQuantity = (int)$this->quantities[$ProductId];
         
         // Enforce the minimum and maximum limits
         if ($currentQuantity <= 0) {
-            $this->quantities[$watchId] = 1;
+            $this->quantities[$ProductId] = 1;
             $this->dispatch('showToast', [
                 'type' => 'warning',
                 'message' => 'Minimum quantity is 1'
             ]);
         } elseif ($currentQuantity > $maxAvailable) {
             // Cap the quantity to available stock
-            $this->quantities[$watchId] = $maxAvailable;
+            $this->quantities[$ProductId] = $maxAvailable;
             $this->dispatch('showToast', [
                 'type' => 'warning',
                 'message' => "Maximum available quantity is {$maxAvailable}"
@@ -246,16 +246,16 @@ public function addToCart($watchId)
     /**
      * Update quantity with validation
      *
-     * @param int $watchId Watch ID
+     * @param int $ProductId Product ID
      * @param int $quantity Requested quantity
      */
-    public function updateQuantity($watchId, $quantity)
+    public function updateQuantity($ProductId, $quantity)
     {
-        if (!isset($this->cart[$watchId])) {
+        if (!isset($this->cart[$ProductId])) {
             return;
         }
         
-        $maxAvailable = $this->cart[$watchId]['inStock'];
+        $maxAvailable = $this->cart[$ProductId]['inStock'];
         
         // Apply limits and validation
         if ($quantity <= 0) {
@@ -269,44 +269,44 @@ public function addToCart($watchId)
         }
         
         // Update the quantity with the validated value
-        $this->quantities[$watchId] = $quantity;
+        $this->quantities[$ProductId] = $quantity;
         $this->updateTotals();
     }
 
 
 
     
-    public function updateDiscount($watchId, $discount)
+    public function updateDiscount($ProductId, $discount)
     {
-        $this->discounts[$watchId] = max(0, min($discount, $this->cart[$watchId]['price']));
+        $this->discounts[$ProductId] = max(0, min($discount, $this->cart[$ProductId]['price']));
         $this->updateTotals();
     }
 
-    public function removeFromCart($watchId)
+    public function removeFromCart($ProductId)
     {
 
-        unset($this->cart[$watchId]);
-        unset($this->quantities[$watchId]);
-        unset($this->discounts[$watchId]);
+        unset($this->cart[$ProductId]);
+        unset($this->quantities[$ProductId]);
+        unset($this->discounts[$ProductId]);
         $this->updateTotals();
 
     }
 
-    public function showDetail($watchId)
+    public function showDetail($ProductId)
     {
-        $this->watchDetails = WatchDetail::join('staff_products', 'staff_products.watch_id', '=', 'watch_details.id')
-            ->join('watch_suppliers', 'watch_suppliers.id', '=', 'watch_details.supplier_id')
+        $this->ProductDetails = ProductDetail::join('staff_products', 'staff_products.Product_id', '=', 'Product_details.id')
+            ->join('Product_suppliers', 'Product_suppliers.id', '=', 'Product_details.supplier_id')
             ->select(
-                'watch_details.*', 
+                'Product_details.*', 
                 'staff_products.unit_price as selling_price',
                 'staff_products.discount_per_unit as discount_price',
                 'staff_products.quantity as total_stock',
                 'staff_products.sold_quantity as sold_stock',
                 DB::raw('(staff_products.quantity - staff_products.sold_quantity) as available_stock'),
-                'watch_suppliers.*',
-                'watch_suppliers.name as supplier_name'
+                'Product_suppliers.*',
+                'Product_suppliers.name as supplier_name'
             )
-            ->where('watch_details.id', $watchId)
+            ->where('Product_details.id', $ProductId)
             ->where('staff_products.staff_id', auth()->id())
             ->first();
 
@@ -617,8 +617,8 @@ public function addToCart($watchId)
 foreach ($this->cart as $id => $item) {
     $requestedQty = $this->quantities[$id];
 
-    // 🔎 Get total available stock for this watch_id from all staff_products
-    $availableStock = StaffProduct::where('watch_id', $item['id'])
+    // 🔎 Get total available stock for this Product_id from all staff_products
+    $availableStock = StaffProduct::where('Product_id', $item['id'])
         ->where('staff_id', auth()->id())
         ->where('status', '!=', 'completed')
         ->selectRaw('SUM(quantity - sold_quantity) as total_available')
@@ -633,7 +633,7 @@ foreach ($this->cart as $id => $item) {
     $unitPrice = $item['price'];
 
     // 🧠 Loop through all staff_product entries and consume from them
-    $staffProducts = StaffProduct::where('watch_id', $item['id'])
+    $staffProducts = StaffProduct::where('Product_id', $item['id'])
         ->where('staff_id', auth()->id())
         ->where('status', '!=', 'completed')
         ->orderBy('id') // or priority field
@@ -649,9 +649,9 @@ foreach ($this->cart as $id => $item) {
         // 💾 Save SaleItem
         SaleItem::create([
             'sale_id' => $sale->id,
-            'watch_id' => $item['id'],
-            'watch_code' => $item['code'],
-            'watch_name' => $item['name'],
+            'Product_id' => $item['id'],
+            'Product_code' => $item['code'],
+            'Product_name' => $item['name'],
             'quantity' => $useQty,
             'unit_price' => $unitPrice,
             'discount' => $itemDiscount,
@@ -690,10 +690,10 @@ foreach ($this->cart as $id => $item) {
                 }
                 
                 // Also update the main inventory
-                $watchStock = WatchStock::where('watch_id', $item['id'])->first();
-                if ($watchStock) {
-                    $watchStock->sold_count += $this->quantities[$id];
-                    $watchStock->save();
+                $ProductStock = ProductStock::where('Product_id', $item['id'])->first();
+                if ($ProductStock) {
+                    $ProductStock->sold_count += $this->quantities[$id];
+                    $ProductStock->save();
                 }
             }
 

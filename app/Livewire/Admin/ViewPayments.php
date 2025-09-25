@@ -30,7 +30,7 @@ class ViewPayments extends Component
                 'sale.customer',
                 'sale.user',
                 'sale.items',
-                'sale.items.Product'
+                'sale.items.product'
             ])->findOrFail($paymentId);
             
             $this->dispatch('openModal', 'payment-receipt-modal');

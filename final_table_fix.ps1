@@ -29,7 +29,7 @@ foreach ($file in $filesToProcess) {
     
     if ($content -ne $originalContent) {
         Set-Content -Path $file.FullName -Value $content -NoNewline
-        Write-Host "  ✓ Updated $relativePath" -ForegroundColor Green
+        Write-Host "  Updated $relativePath" -ForegroundColor Green
     }
 }
 

@@ -36,7 +36,7 @@ class MadeByList extends Component
     }
     public function saveCountry(){
         $this->validate([
-            'countryName' => 'required|unique:Product_made_bies,country_name'
+            'countryName' => 'required|unique:product_made_bies,country_name'
         ]);
         try{
             
@@ -69,7 +69,7 @@ class MadeByList extends Component
     public function updateCountry($id){
         // dd($id);
         $this->validate([
-            'editCountryName' => 'required|unique:Product_made_bies,country_name,'.$id
+            'editCountryName' => 'required|unique:product_made_bies,country_name,'.$id
         ]);
         try{
             ProductMadeBy::where('id', $id)->update([

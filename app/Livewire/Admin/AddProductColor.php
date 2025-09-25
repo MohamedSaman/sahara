@@ -33,8 +33,8 @@ public $modalKey = 1;
     }
     public function saveColor(){
         $this->validate([
-            'colorName' => 'required|unique:Product_colors,name',
-            'colorCode' => 'required|unique:Product_colors,hex_code'
+            'colorName' => 'required|unique:product_colors,name',
+            'colorCode' => 'required|unique:product_colors,hex_code'
         ]);
         try{
             ProductColors::create([
@@ -69,8 +69,8 @@ public $modalKey = 1;
 
     public function updateColor($id){
         $this->validate([
-            'editColorName' => 'required|unique:Product_colors,name,'.$id,
-            'editColorCode' => 'required|unique:Product_colors,hex_code,'.$id
+            'editColorName' => 'required|unique:product_colors,name,'.$id,
+            'editColorCode' => 'required|unique:product_colors,hex_code,'.$id
         ]);
         try{
             

@@ -30,7 +30,7 @@ class PaymentApprovals extends Component
             $this->selectedPayment = Payment::with([
                 'sale.customer', 
                 'sale.items',
-                'sale.items.Product', // Use the correct relationship name
+                'sale.items.product', // Use the correct relationship name
                 'sale.user'
             ])->findOrFail($paymentId);
         } catch (Exception $e) {

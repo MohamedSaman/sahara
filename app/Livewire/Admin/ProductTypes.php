@@ -36,7 +36,7 @@ class ProductTypes extends Component
 
     public function saveType(){
         $this->validate([
-            'typeName' => 'required|unique:Product_type_lists,type_name'
+            'typeName' => 'required|unique:product_type_lists,type_name'
         ]);
         try{
             
@@ -69,7 +69,7 @@ class ProductTypes extends Component
     public function updateType($id){
         // dd($id);
         $this->validate([
-            'editTypeName' => 'required|unique:Product_type_lists,type_name,'.$id
+            'editTypeName' => 'required|unique:product_type_lists,type_name,'.$id
         ]);
         try{
             ProductTypeList::where('id', $id)->update([

@@ -40,16 +40,16 @@ class CustomerSaleDetails extends Component
         // Get product-wise sales with Product details
         $productSales = DB::table('sale_items')
             ->join('sales', 'sale_items.sale_id', '=', 'sales.id')
-            ->join('Product_details', 'sale_items.Product_id', '=', 'Product_details.id')
+            ->join('product_details', 'sale_items.product_id', '=', 'product_details.id')
             ->where('sales.customer_id', $customerId)
             ->select(
                 'sale_items.*',
                 'sales.invoice_number',
                 'sales.created_at as sale_date',
-                'Product_details.name as Product_name',
-                'Product_details.brand as Product_brand',
-                'Product_details.model as Product_model',
-                'Product_details.image as Product_image'
+                'product_details.name as Product_name',
+                'product_details.brand as Product_brand',
+                'product_details.model as Product_model',
+                'product_details.image as Product_image'
             )
             ->orderBy('sales.created_at', 'desc')
             ->get();

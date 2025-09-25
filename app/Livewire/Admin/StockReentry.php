@@ -60,10 +60,10 @@ class StockReentry extends Component
             $product->quantity -= ($totalToRemove + $totalToRestock);
             $product->save();
 
-            $stock = ProductStock::where('Product_id', $product->Product_id)->first();
+            $stock = ProductStock::where('product_id', $product->product_id)->first();
             if (!$stock) {
                 $stock = new ProductStock();
-                $stock->Product_id = $product->Product_id;
+                $stock->product_id = $product->product_id;
                 $stock->damage_stock = 0;
                 $stock->available_stock = 0;
             }

@@ -563,13 +563,13 @@
         @if(pathinfo($attachment, PATHINFO_EXTENSION) === 'pdf')
             <div class="d-flex flex-column align-items-center p-4">
                 <i class="bi bi-file-earmark-pdf text-danger fs-1 mb-2"></i>
-                <a href="{{ asset('public/storage/' . $attachment) }}" 
+                <a href="{{ asset('storage/' . $attachment) }}" 
                    target="_blank" class="btn btn-sm btn-outline-primary mt-2">
                    <i class="bi bi-eye me-1"></i> View PDF
                 </a>
             </div>
         @else
-            <img src="{{ asset('public/storage/' . $attachment) }}"
+            <img src="{{ asset('storage/' . $attachment) }}"
                 class="img-fluid" style="max-height: 200px"
                 onerror="this.onerror=null; this.src=''; this.parentNode.innerHTML='<div class=\'d-flex flex-column align-items-center p-4\'><i class=\'bi bi-file-earmark-image text-primary fs-1 mb-2\'></i><span class=\'text-muted\'>Image (cannot display preview)</span></div>';">
         @endif

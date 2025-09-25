@@ -8,8 +8,8 @@ use App\Models\Payment;
 use Livewire\Component;
 use App\Models\Customer;
 use App\Models\SaleItem;
-use App\Models\WatchStock;
-use App\Models\WatchDetail;
+use App\Models\ProductStock;
+use App\Models\ProductDetail;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Log;
@@ -27,7 +27,7 @@ class StoreBilling extends Component
     public $cart = [];
     public $quantities = [];
     public $discounts = [];
-    public $watchDetails = null;
+    public $ProductDetails = null;
     public $subtotal = 0;
     public $totalDiscount = 0;
     public $grandTotal = 0;
@@ -88,21 +88,21 @@ class StoreBilling extends Component
     {
         if (strlen($this->search) >= 2) {
             // Search directly from main store inventory (not staff stock)
-            $this->searchResults = WatchDetail::join('watch_stocks', 'watch_stocks.watch_id', '=', 'watch_details.id')
-                ->join('watch_prices', 'watch_prices.watch_id', '=', 'watch_details.id')
+            $this->searchResults = ProductDetail::join('Product_stocks', 'Product_stocks.Product_id', '=', 'Product_details.id')
+                ->join('Product_prices', 'Product_prices.Product_id', '=', 'Product_details.id')
                 ->select(
-                    'watch_details.*',
-                    'watch_prices.selling_price as selling_price',
-                    'watch_prices.discount_price as discount_price',
-                    'watch_stocks.available_stock'
+                    'Product_details.*',
+                    'Product_prices.selling_price as selling_price',
+                    'Product_prices.discount_price as discount_price',
+                    'Product_stocks.available_stock'
                 )
-                ->where('watch_stocks.available_stock', '>', 0)
+                ->where('Product_stocks.available_stock', '>', 0)
                 ->where(function($query) {
-                    $query->where('watch_details.code', 'like', '%' . $this->search . '%')
-                        ->orWhere('watch_details.model', 'like', '%' . $this->search . '%')
-                        ->orWhere('watch_details.barcode', 'like', '%' . $this->search . '%')
-                        ->orWhere('watch_details.brand', 'like', '%' . $this->search . '%')
-                        ->orWhere('watch_details.name', 'like', '%' . $this->search . '%');
+                    $query->where('Product_details.code', 'like', '%' . $this->search . '%')
+                        ->orWhere('Product_details.model', 'like', '%' . $this->search . '%')
+                        ->orWhere('Product_details.barcode', 'like', '%' . $this->search . '%')
+                        ->orWhere('Product_details.brand', 'like', '%' . $this->search . '%')
+                        ->orWhere('Product_details.name', 'like', '%' . $this->search . '%');
                 })
                 ->take(50)
                 ->get();
@@ -111,49 +111,64 @@ class StoreBilling extends Component
         }
     }
 
-    public function addToCart($watchId)
+    public function addToCart($ProductId)
     {
         // Get product details from store inventory
-        $watch = WatchDetail::join('watch_stocks', 'watch_stocks.watch_id', '=', 'watch_details.id')
-            ->join('watch_prices', 'watch_prices.watch_id', '=', 'watch_details.id')
-            ->where('watch_details.id', $watchId)
+        $Product = ProductDetail::join('Product_stocks', 'Product_stocks.Product_id', '=', 'Product_details.id')
+            ->join('Product_prices', 'Product_prices.Product_id', '=', 'Product_details.id')
+            ->where('Product_details.id', $ProductId)
             ->select(
-                'watch_details.*',
-                'watch_prices.selling_price as selling_price',
-                'watch_prices.discount_price as discount_price',
-                'watch_stocks.available_stock'
+                'Product_details.*',
+                'Product_prices.selling_price as selling_price',
+                'Product_prices.discount_price as discount_price',
+                'Product_stocks.available_stock'
             )
             ->first();
 
-        if (!$watch || $watch->available_stock <= 0) {
+        if (!$Product || $Product->available_stock <= 0) {
             $this->dispatch('showToast', ['type' => 'danger', 'message' => 'This product is not available in store.']);
             return;
         }
 
-        $existingItem = collect($this->cart)->firstWhere('id', $watchId);
+        $existingItem = collect($this->cart)->firstWhere('id', $ProductId);
 
         if ($existingItem) {
-            if (($this->quantities[$watchId] + 1) > $watch->available_stock) {
-                $this->dispatch('showToast', ['type' => 'warning', 'message' => "Maximum available quantity ({$watch->available_stock}) reached."]);
+            if (($this->quantities[$ProductId] + 1) > $Product->available_stock) {
+                $this->dispatch('showToast', ['type' => 'warning', 'message' => "Maximum available quantity ({$Product->available_stock}) reached."]);
                 return;
             }
-            $this->quantities[$watchId]++;
+            $this->quantities[$ProductId]++;
+            
+            // Move existing item to top by removing and re-adding it
+            $existingCartItem = $this->cart[$ProductId];
+            $existingQuantity = $this->quantities[$ProductId];
+            $existingDiscount = $this->discounts[$ProductId];
+            
+            unset($this->cart[$ProductId]);
+            unset($this->quantities[$ProductId]);
+            unset($this->discounts[$ProductId]);
+            
+            $this->cart = [$ProductId => $existingCartItem] + $this->cart;
+            $this->quantities = [$ProductId => $existingQuantity] + $this->quantities;
+            $this->discounts = [$ProductId => $existingDiscount] + $this->discounts;
         } else {
-            $discountPrice = $watch->discount_price ?? 0;
-            $this->cart[$watchId] = [
-                'id' => $watch->id,
-                'code' => $watch->code,
-                'name' => $watch->name,
-                'model' => $watch->model,
-                'brand' => $watch->brand,
-                'image' => $watch->image,
-                'price' => $watch->selling_price ?? 0,
+            $discountPrice = $Product->discount_price ?? 0;
+            $newItem = [
+                'id' => $Product->id,
+                'code' => $Product->code,
+                'name' => $Product->name,
+                'model' => $Product->model,
+                'brand' => $Product->brand,
+                'image' => $Product->image,
+                'price' => $Product->selling_price ?? 0,
                 'discountPrice' => $discountPrice ?? 0,
-                'inStock' => $watch->available_stock ?? 0,
+                'inStock' => $Product->available_stock ?? 0,
             ];
 
-            $this->quantities[$watchId] = 1;
-            $this->discounts[$watchId] = $discountPrice;
+            // Add new item to the beginning of the cart
+            $this->cart = [$ProductId => $newItem] + $this->cart;
+            $this->quantities = [$ProductId => 1] + $this->quantities;
+            $this->discounts = [$ProductId => $discountPrice] + $this->discounts;
         }
 
         $this->search = '';
@@ -161,23 +176,23 @@ class StoreBilling extends Component
         $this->updateTotals();
     }
 
-    public function validateQuantity($watchId)
+    public function validateQuantity($ProductId)
     {
-        if (!isset($this->cart[$watchId]) || !isset($this->quantities[$watchId])) {
+        if (!isset($this->cart[$ProductId]) || !isset($this->quantities[$ProductId])) {
             return;
         }
 
-        $maxAvailable = $this->cart[$watchId]['inStock'];
-        $currentQuantity = (int)$this->quantities[$watchId];
+        $maxAvailable = $this->cart[$ProductId]['inStock'];
+        $currentQuantity = (int)$this->quantities[$ProductId];
 
         if ($currentQuantity <= 0) {
-            $this->quantities[$watchId] = 1;
+            $this->quantities[$ProductId] = 1;
             $this->dispatch('showToast', [
                 'type' => 'warning',
                 'message' => 'Minimum quantity is 1'
             ]);
         } elseif ($currentQuantity > $maxAvailable) {
-            $this->quantities[$watchId] = $maxAvailable;
+            $this->quantities[$ProductId] = $maxAvailable;
             $this->dispatch('showToast', [
                 'type' => 'warning',
                 'message' => "Maximum available quantity is {$maxAvailable}"
@@ -187,13 +202,13 @@ class StoreBilling extends Component
         $this->updateTotals();
     }
 
-    public function updateQuantity($watchId, $quantity)
+    public function updateQuantity($ProductId, $quantity)
     {
-        if (!isset($this->cart[$watchId])) {
+        if (!isset($this->cart[$ProductId])) {
             return;
         }
 
-        $maxAvailable = $this->cart[$watchId]['inStock'];
+        $maxAvailable = $this->cart[$ProductId]['inStock'];
 
         if ($quantity <= 0) {
             $quantity = 1;
@@ -205,36 +220,36 @@ class StoreBilling extends Component
             ]);
         }
 
-        $this->quantities[$watchId] = $quantity;
+        $this->quantities[$ProductId] = $quantity;
         $this->updateTotals();
     }
 
-    public function updateDiscount($watchId, $discount)
+    public function updateDiscount($ProductId, $discount)
     {
-        $this->discounts[$watchId] = max(0, min($discount, $this->cart[$watchId]['price']));
+        $this->discounts[$ProductId] = max(0, min($discount, $this->cart[$ProductId]['price']));
         $this->updateTotals();
     }
 
-    public function removeFromCart($watchId)
+    public function removeFromCart($ProductId)
     {
-        unset($this->cart[$watchId]);
-        unset($this->quantities[$watchId]);
-        unset($this->discounts[$watchId]);
+        unset($this->cart[$ProductId]);
+        unset($this->quantities[$ProductId]);
+        unset($this->discounts[$ProductId]);
         $this->updateTotals();
     }
 
-    public function showDetail($watchId)
+    public function showDetail($ProductId)
     {
-        $this->watchDetails = WatchDetail::join('watch_stocks', 'watch_stocks.watch_id', '=', 'watch_details.id')
+        $this->ProductDetails = ProductDetail::join('Product_stocks', 'Product_stocks.Product_id', '=', 'Product_details.id')
             ->select(
-                'watch_details.*',
-                'watch_stocks.selling_price as selling_price',
-                'watch_stocks.discount_per_unit as discount_price',
-                'watch_stocks.quantity as total_stock',
-                'watch_stocks.sold_count as sold_stock',
-                DB::raw('(watch_stocks.quantity - watch_stocks.sold_count) as available_stock')
+                'Product_details.*',
+                'Product_stocks.selling_price as selling_price',
+                'Product_stocks.discount_per_unit as discount_price',
+                'Product_stocks.quantity as total_stock',
+                'Product_stocks.sold_count as sold_stock',
+                DB::raw('(Product_stocks.quantity - Product_stocks.sold_count) as available_stock')
             )
-            ->where('watch_details.id', $watchId)
+            ->where('Product_details.id', $ProductId)
             ->first();
 
         $this->js('$("#viewDetailModal").modal("show")');
@@ -324,11 +339,79 @@ class StoreBilling extends Component
         }
     }
 
+    public function updatedPaymentReceiptImage()
+    {
+        if ($this->paymentReceiptImage) {
+            try {
+                $this->paymentReceiptImagePreview = $this->paymentReceiptImage->temporaryUrl();
+            } catch (\Exception $e) {
+                $this->paymentReceiptImagePreview = null;
+                $this->js('swal.fire("Error", "Failed to preview the uploaded file.", "error")');
+            }
+        } else {
+            $this->paymentReceiptImagePreview = null;
+        }
+    }
+
+    public function updatedInitialPaymentReceiptImage()
+    {
+        if ($this->initialPaymentReceiptImage) {
+            try {
+                $this->initialPaymentReceiptImagePreview = $this->initialPaymentReceiptImage->temporaryUrl();
+            } catch (\Exception $e) {
+                $this->initialPaymentReceiptImagePreview = null;
+                $this->js('swal.fire("Error", "Failed to preview the uploaded file.", "error")');
+            }
+        } else {
+            $this->initialPaymentReceiptImagePreview = null;
+        }
+    }
+
+    public function updatedBalancePaymentReceiptImage()
+    {
+        if ($this->balancePaymentReceiptImage) {
+            try {
+                $this->balancePaymentReceiptImagePreview = $this->balancePaymentReceiptImage->temporaryUrl();
+            } catch (\Exception $e) {
+                $this->balancePaymentReceiptImagePreview = null;
+                $this->js('swal.fire("Error", "Failed to preview the uploaded file.", "error")');
+            }
+        } else {
+            $this->balancePaymentReceiptImagePreview = null;
+        }
+    }
+
+    public function updatedDuePaymentAttachment()
+    {
+        if ($this->duePaymentAttachment) {
+            try {
+                $this->duePaymentAttachmentPreview = $this->duePaymentAttachment->temporaryUrl();
+            } catch (\Exception $e) {
+                $this->duePaymentAttachmentPreview = null;
+                $this->js('swal.fire("Error", "Failed to preview the uploaded file.", "error")');
+            }
+        } else {
+            $this->duePaymentAttachmentPreview = null;
+        }
+    }
+
+    protected $validationAttributes = [
+        'customerId' => 'customer',
+        'paymentMethod' => 'payment method',
+        'paymentReceiptImage' => 'payment receipt',
+        'initialPaymentAmount' => 'initial payment amount',
+        'initialPaymentMethod' => 'initial payment method',
+        'balancePaymentMethod' => 'balance payment method',
+        'balanceDueDate' => 'balance due date',
+        'newCustomerName' => 'customer name',
+        'newCustomerPhone' => 'phone number',
+    ];
+
     // ...Keep all file upload, validation, and payment logic as in staff billing...
 
     // (Copy all methods for payment receipt handling, due payment, etc. from staff Billing.php)
 
-    // Only change logic that references staff_products to watch_stocks
+    // Only change logic that references staff_products to Product_stocks
 
 public function completeSale()
 {
@@ -418,9 +501,9 @@ if ($this->paymentType === 'full') {
         $totalSoldVal = 0;
 
         foreach ($this->cart as $id => $item) {
-           $watchStock = WatchStock::where('watch_id', $item['id'])->first();
-if (!$watchStock || $watchStock->available_stock < $this->quantities[$id]) {
-    throw new Exception("Insufficient stock for item: {$item['name']}. Available: {$watchStock->available_stock}");
+           $ProductStock = ProductStock::where('Product_id', $item['id'])->first();
+if (!$ProductStock || $ProductStock->available_stock < $this->quantities[$id]) {
+    throw new Exception("Insufficient stock for item: {$item['name']}. Available: {$ProductStock->available_stock}");
 }
 
             $price = $item['price'] ?: 0;
@@ -430,9 +513,9 @@ if (!$watchStock || $watchStock->available_stock < $this->quantities[$id]) {
             // Insert sale item (linked to sales table)
             SaleItem::create([
                 'sale_id'    => $sale->id,
-                'watch_id'   => $item['id'],
-                'watch_code' => $item['code'],
-                'watch_name' => $item['name'],
+                'Product_id'   => $item['id'],
+                'Product_code' => $item['code'],
+                'Product_name' => $item['name'],
                 'quantity'   => $this->quantities[$id],
                 'unit_price' => $price,
                 'discount'   => $itemDiscount,
@@ -440,9 +523,9 @@ if (!$watchStock || $watchStock->available_stock < $this->quantities[$id]) {
             ]);
 
             // Update stock
- $watchStock->sold_count += $this->quantities[$id];
-$watchStock->available_stock -= $this->quantities[$id];
-$watchStock->save();
+ $ProductStock->sold_count += $this->quantities[$id];
+$ProductStock->available_stock -= $this->quantities[$id];
+$ProductStock->save();
 
             $totalSoldQty += $this->quantities[$id];
             $totalSoldVal += $total;
@@ -550,6 +633,72 @@ $watchStock->save();
         $this->balancePaymentReceiptImage = null;
         $this->balancePaymentReceiptImagePreview = null;
         $this->balanceBankName = '';
+    }
+
+    public function closeReceiptModal()
+    {
+        $this->showReceipt = false;
+        $this->js('$("#receiptModal").modal("hide")');
+    }
+
+    public function printReceipt()
+    {
+        $this->dispatch('printReceipt');
+    }
+
+    public function downloadReceipt()
+    {
+        if (!$this->lastSaleId) {
+            $this->js('swal.fire("Error", "No receipt available to download.", "error")');
+            return;
+        }
+
+        // Use the same route as staff billing for consistency
+        return redirect()->route('receipts.download', $this->lastSaleId);
+    }
+
+    /**
+     * Get file type icon or preview based on file object and preview URL
+     *
+     * @param mixed $file File object
+     * @param string|null $previewUrl Preview URL if available
+     * @return array File information with icon and preview status
+     */
+    public function getFilePreviewInfo($file, $previewUrl = null)
+    {
+        if (!$file) {
+            return ['icon' => 'fas fa-file', 'hasPreview' => false];
+        }
+
+        $extension = '';
+        if (is_object($file) && method_exists($file, 'getClientOriginalExtension')) {
+            $extension = strtolower($file->getClientOriginalExtension());
+        } elseif (is_string($file)) {
+            $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+        }
+
+        $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+        $documentExtensions = ['pdf', 'doc', 'docx', 'txt'];
+
+        if (in_array($extension, $imageExtensions)) {
+            return [
+                'icon' => 'fas fa-image text-primary',
+                'hasPreview' => true,
+                'type' => 'image'
+            ];
+        } elseif (in_array($extension, $documentExtensions)) {
+            return [
+                'icon' => 'fas fa-file-pdf text-danger',
+                'hasPreview' => false,
+                'type' => 'document'
+            ];
+        } else {
+            return [
+                'icon' => 'fas fa-file text-muted',
+                'hasPreview' => false,
+                'type' => 'file'
+            ];
+        }
     }
 
     // ...rest of the methods (viewReceipt, printReceipt, downloadReceipt, getFilePreviewInfo)...

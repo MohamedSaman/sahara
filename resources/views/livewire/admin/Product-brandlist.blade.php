@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="card shadow-sm">
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap bg-light">
-                <h4 class="card-title mb-2 mb-md-0">Watch Brand List</h4>
+                <h4 class="card-title mb-2 mb-md-0">Product Brand List</h4>
                 <div class="card-tools">
                     <button wire:click="createBrand" class="btn btn-primary btn-sm">
                         <i class="fas fa-plus-circle"></i> Add New Brand
@@ -13,7 +13,7 @@
                 <table class="table table-bordered table-hover table-responsive">
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th>No</th>
                             <th>Brand Name</th>
                             <th>Actions</th>
                         </tr>

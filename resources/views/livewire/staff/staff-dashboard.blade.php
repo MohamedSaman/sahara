@@ -712,7 +712,7 @@
                     <div class="chart-header d-flex justify-content-between align-items-center flex-wrap">
                         <div>
                             <h6 class="mb-1">Brand-wise Sales</h6>
-                            <p class="text-muted mb-0 small">Your sales performance by watch brands</p>
+                            <p class="text-muted mb-0 small">Your sales performance by Product brands</p>
                         </div>
                         <div class="mt-2 mt-sm-0">
                             {{-- <select class="form-select form-select-sm w-auto" id="chart-time-range">
@@ -774,12 +774,12 @@
         <!-- Inventory Status Widget Row -->
         <div class="container-fluid mt-3 mt-md-4 p-0">
             <div class="row g-2 g-md-3">
-                <!-- Watch Inventory Status -->
+                <!-- Product Inventory Status -->
                 <div class="col-12 col-lg-5">
                     <div class="widget-container">
                         <div class="widget-header">
-                            <h6>Watch Inventory Status</h6>
-                            <p class="text-muted small mb-0">Your current watch stock levels</p>
+                            <h6>Product Inventory Status</h6>
+                            <p class="text-muted small mb-0">Your current Product stock levels</p>
                         </div>
 
                         <div class="inventory-container">
@@ -809,7 +809,7 @@
                                 <div class="d-flex align-items-center flex-wrap flex-md-nowrap mt-3">
                                     @if ($item->image)
                                         <div class="me-2" style="width: 35px; height: 35px;">
-                                            <img src="{{ asset('public/storage/' . $item->image) }}"
+                                            <img src="{{ asset('storage/' . $item->image) }}"
                                                 alt="{{ $item->name }}" class="img-fluid rounded"
                                                 style="width: 100%; height: 100%; object-fit: cover;">
                                         </div>
@@ -839,7 +839,7 @@
                                 @endif
                             @empty
                                 <div class="alert alert-info">
-                                    <i class="bi bi-info-circle me-2"></i> No watch inventory has been assigned to you
+                                    <i class="bi bi-info-circle me-2"></i> No Product inventory has been assigned to you
                                     yet.
                                 </div>
                             @endforelse

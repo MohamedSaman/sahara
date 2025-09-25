@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="card shadow-sm">
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap bg-light p-2 p-md-3">
-                <h4 class="card-title fs-5 fs-md-4 mb-2 mb-md-0">Watch Stock Details</h4>
+                <h4 class="card-title fs-5 fs-md-4 mb-2 mb-md-0">Product Stock Details</h4>
                 <div class="card-tools">
                     <button wire:click="exportToCSV" class="btn btn-outline-secondary btn-sm">
                         <i class="bi bi-download me-1"></i> Export
@@ -14,7 +14,7 @@
                     <table class="table table-bordered table-hover table-sm table-md-lg">
                         <thead class="table-light">
                             <tr>
-                                <th class="text-center">#</th>
+                                <th class="text-center">No</th>
                                 <th>Staff Name</th>
                                 <th class="d-none d-md-table-cell">Email</th>
                                 <th class="d-none d-sm-table-cell">Contact</th>
@@ -125,36 +125,36 @@
                         <div class="p-2 p-md-4">
                             <div class="mb-3">
                                 <input type="text" class="form-control form-control-sm"
-                                    placeholder="Search watches..." id="watchSearchInput">
+                                    placeholder="Search Products..." id="ProductSearchInput">
                             </div>
-                            <div class="row g-2 g-md-3 watch-items">
+                            <div class="row g-2 g-md-3 Product-items">
                                 @foreach ($stockDetails as $item)
-                                    <div class="col-12 col-sm-6 col-lg-4 watch-item">
+                                    <div class="col-12 col-sm-6 col-lg-4 Product-item">
                                         <div class="card h-100 border-0 shadow-sm">
                                             <div class="row g-0">
                                                 <div class="col-4">
                                                     <div
                                                         class="p-2 p-md-3 h-100 d-flex align-items-center justify-content-center bg-light rounded-start">
-                                                        @if ($item->watch_image)
-                                                            <img src="{{ asset('public/storage/' . $item->watch_image) }}"
-                                                                alt="{{ $item->watch_name }}" class="img-fluid"
+                                                        @if ($item->Product_image)
+                                                            <img src="{{ asset('storage/' . $item->Product_image) }}"
+                                                                alt="{{ $item->Product_name }}" class="img-fluid"
                                                                 style="max-height: 80px; max-height: 100px; object-fit: contain;">
                                                         @else
                                                             <div class="text-center text-muted">
-                                                                <i class="bi bi-watch fs-3 fs-md-1"></i>
+                                                                <i class="bi bi-Product fs-3 fs-md-1"></i>
                                                             </div>
                                                         @endif
                                                     </div>
                                                 </div>
                                                 <div class="col-8">
                                                     <div class="card-body p-2 p-md-3">
-                                                        <h6 class="card-title mb-1 fw-bold watch-brand fs-6 fs-md-5">
-                                                            {{ $item->watch_brand }}</h6>
-                                                        <p class="card-text small mb-0 watch-name">
-                                                            {{ $item->watch_name }} {{ $item->watch_model }}
+                                                        <h6 class="card-title mb-1 fw-bold Product-brand fs-6 fs-md-5">
+                                                            {{ $item->Product_brand }}</h6>
+                                                        <p class="card-text small mb-0 Product-name">
+                                                            {{ $item->Product_name }} {{ $item->Product_model }}
                                                         </p>
                                                         <p class="card-text small text-muted mb-2">
-                                                            Code: {{ $item->watch_code }}
+                                                            Code: {{ $item->Product_code }}
                                                         </p>
 
                                                         <!-- Stock Status -->
@@ -210,7 +210,7 @@
                         <div class="p-4 text-center">
                             <div class="py-5">
                                 <i class="bi bi-search display-4 text-muted"></i>
-                                <p class="mt-3">No watch inventory data found for this staff member.</p>
+                                <p class="mt-3">No Product inventory data found for this staff member.</p>
                             </div>
                         </div>
                     @endif
@@ -234,14 +234,14 @@
             }, 500); // 500ms delay before showing the modal
         });
 
-        // Search functionality for watches in modal
+        // Search functionality for Productes in modal
         document.addEventListener('DOMContentLoaded', function() {
             document.body.addEventListener('input', function(e) {
-                if (e.target && e.target.id === 'watchSearchInput') {
+                if (e.target && e.target.id === 'ProductSearchInput') {
                     const searchValue = e.target.value.toLowerCase();
-                    document.querySelectorAll('.watch-item').forEach(item => {
-                        const brand = item.querySelector('.watch-brand').textContent.toLowerCase();
-                        const name = item.querySelector('.watch-name').textContent.toLowerCase();
+                    document.querySelectorAll('.Product-item').forEach(item => {
+                        const brand = item.querySelector('.Product-brand').textContent.toLowerCase();
+                        const name = item.querySelector('.Product-name').textContent.toLowerCase();
 
                         if (brand.includes(searchValue) || name.includes(searchValue)) {
                             item.style.display = 'block';
@@ -269,7 +269,7 @@
                 modalContent.querySelector('.modal-footer').remove();
             }
             
-            const searchInput = modalContent.querySelector('#watchSearchInput');
+            const searchInput = modalContent.querySelector('#ProductSearchInput');
             if (searchInput) {
                 searchInput.parentElement.remove();
             }
@@ -298,7 +298,7 @@
                         @media print {
                             .no-print { display: none; }
                         }
-                        .watch-item { page-break-inside: avoid; }
+                        .Product-item { page-break-inside: avoid; }
                         @media (max-width: 768px) {
                             body { padding: 10px; }
                             .container-fluid { padding: 0; }

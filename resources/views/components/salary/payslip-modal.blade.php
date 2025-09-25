@@ -24,9 +24,9 @@
                     @endphp
                     <div class="payslip-container">
                         <div class="text-center mb-4">
-                            <h3 class="mb-0">NEW WATCH COMPANY ( MR TRADING )</h3>
-                            <p class="mb-0 text-muted small">NO 44, DOOLMALA, THIHARIYA</p>
-                            <p class="mb-0 text-muted small">Phone: (033) 228 7437 | Email: hakeem9053@gmail.com</p>
+                            <h3 class="mb-0">ZAHARA INTERNATIONAL</h3>
+                            <p class="mb-0 text-muted small">NO 14/A, YATIYANA ROAD,HORAGOLLA,NITTAMBUWA</p>
+                            <p class="mb-0 text-muted small">Phone: (077) 3751785 | (033) 2297739 | Email: zahara.international@yahoo.com</p>
                             <h4 class="mt-3 border-bottom border-2 pb-2">SALARY PAYSLIP</h4>
                         </div>
                         <div class="card border-0 shadow-sm mb-4">

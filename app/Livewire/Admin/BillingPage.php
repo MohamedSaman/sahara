@@ -10,9 +10,9 @@ use Livewire\Component;
 use App\Models\Customer;
 use App\Models\SaleItem;
 use App\Models\StaffSale;
-use App\Models\WatchPrice;
-use App\Models\WatchStock;
-use App\Models\WatchDetail;
+use App\Models\ProductPrice;
+use App\Models\ProductStock;
+use App\Models\ProductDetail;
 use App\Models\StaffProduct;
 use Livewire\WithFileUploads;
 use Livewire\Attributes\Title;
@@ -33,7 +33,7 @@ class BillingPage extends Component
     public $cart = [];
     public $quantities = [];
     public $discounts = [];
-    public $watchDetails = null;
+    public $ProductDetails = null;
     public $subtotal = 0;
     public $totalDiscount = 0;
     public $grandTotal = 0;
@@ -103,17 +103,17 @@ class BillingPage extends Component
     public function updatedSearch()
     {
         if (strlen($this->search) >= 2) {
-            $this->searchResults = WatchDetail::join('watch_prices', 'watch_prices.watch_id', '=', 'watch_details.id')
-                ->join('watch_stocks', 'watch_stocks.watch_id', '=', 'watch_details.id')
-                ->select('watch_details.*', 'watch_prices.selling_price', 'watch_prices.discount_price', 'watch_stocks.available_stock')
-                ->where('watch_details.status', '=', 'active')
-                ->where('watch_stocks.available_stock', '>', 0) // Only show products with stock > 0
+            $this->searchResults = ProductDetail::join('Product_prices', 'Product_prices.Product_id', '=', 'Product_details.id')
+                ->join('Product_stocks', 'Product_stocks.Product_id', '=', 'Product_details.id')
+                ->select('Product_details.*', 'Product_prices.selling_price', 'Product_prices.discount_price', 'Product_stocks.available_stock')
+                ->where('Product_details.status', '=', 'active')
+                ->where('Product_stocks.available_stock', '>', 0) // Only show products with stock > 0
                 ->where(function($query) {
-                    $query->where('watch_details.code', 'like', '%' . $this->search . '%')
-                        ->orWhere('watch_details.model', 'like', '%' . $this->search . '%')
-                        ->orWhere('watch_details.barcode', 'like', '%' . $this->search . '%')
-                        ->orWhere('watch_details.brand', 'like', '%' . $this->search . '%')
-                        ->orWhere('watch_details.name', 'like', '%' . $this->search . '%');
+                    $query->where('Product_details.code', 'like', '%' . $this->search . '%')
+                        ->orWhere('Product_details.model', 'like', '%' . $this->search . '%')
+                        ->orWhere('Product_details.barcode', 'like', '%' . $this->search . '%')
+                        ->orWhere('Product_details.brand', 'like', '%' . $this->search . '%')
+                        ->orWhere('Product_details.name', 'like', '%' . $this->search . '%');
                 })
                 ->take(50)
                 ->get();
@@ -122,45 +122,45 @@ class BillingPage extends Component
         }
     }
 
-    public function addToCart($watchId)
+    public function addToCart($ProductId)
     {
-        $watch = WatchDetail::join('watch_prices', 'watch_prices.watch_id', '=', 'watch_details.id')
-            ->join('watch_stocks', 'watch_stocks.watch_id', '=', 'watch_details.id')
-            ->where('watch_details.id', $watchId)
-            ->select('watch_details.*', 'watch_prices.selling_price', 'watch_prices.discount_price', 
-                     'watch_stocks.available_stock')
+        $Product = ProductDetail::join('Product_prices', 'Product_prices.Product_id', '=', 'Product_details.id')
+            ->join('Product_stocks', 'Product_stocks.Product_id', '=', 'Product_details.id')
+            ->where('Product_details.id', $ProductId)
+            ->select('Product_details.*', 'Product_prices.selling_price', 'Product_prices.discount_price', 
+                     'Product_stocks.available_stock')
             ->first();
 
-        if (!$watch || $watch->available_stock <= 0) {
+        if (!$Product || $Product->available_stock <= 0) {
             $this->js('swal.fire("Error", "This product is out of stock.", "error")');
             return;
         }
 
-        $existingItem = collect($this->cart)->firstWhere('id', $watchId);
+        $existingItem = collect($this->cart)->firstWhere('id', $ProductId);
 
         if ($existingItem) {
             // Check if adding one more would exceed stock
-            if (($this->quantities[$watchId] + 1) > $watch->available_stock) {
+            if (($this->quantities[$ProductId] + 1) > $Product->available_stock) {
                 $this->js('swal.fire("Warning", "Maximum available quantity reached.", "warning")');
                 return;
             }
-            $this->quantities[$watchId]++;
+            $this->quantities[$ProductId]++;
         } else {
-            $discountPrice = $watch->selling_price - $watch->discount_price ?? 0;
-            $this->cart[$watchId] = [
-                'id' => $watch->id,
-                'code' => $watch->code,
-                'name' => $watch->name,
-                'model' => $watch->model,
-                'brand' => $watch->brand,
-                'image' => $watch->image,
-                'price' => $watch->selling_price ?? 0,
+            $discountPrice = $Product->selling_price - $Product->discount_price ?? 0;
+            $this->cart[$ProductId] = [
+                'id' => $Product->id,
+                'code' => $Product->code,
+                'name' => $Product->name,
+                'model' => $Product->model,
+                'brand' => $Product->brand,
+                'image' => $Product->image,
+                'price' => $Product->selling_price ?? 0,
                 'discountPrice' => $discountPrice ?? 0,
-                'inStock' => $watch->available_stock ?? 0,
+                'inStock' => $Product->available_stock ?? 0,
             ];
 
-            $this->quantities[$watchId] = 1;
-            $this->discounts[$watchId] = 0;
+            $this->quantities[$ProductId] = 1;
+            $this->discounts[$ProductId] = 0;
         }
 
         $this->search = '';
@@ -168,13 +168,13 @@ class BillingPage extends Component
         $this->updateTotals();
     }
 
-    public function updateQuantity($watchId, $quantity)
+    public function updateQuantity($ProductId, $quantity)
     {
-        if (!isset($this->cart[$watchId])) {
+        if (!isset($this->cart[$ProductId])) {
             return;
         }
 
-        $maxAvailable = $this->cart[$watchId]['inStock'];
+        $maxAvailable = $this->cart[$ProductId]['inStock'];
         
         // Ensure quantity is valid
         $quantity = (int)$quantity;
@@ -185,33 +185,33 @@ class BillingPage extends Component
             $this->js('swal.fire("Warning", "Quantity limited to maximum available (' . $maxAvailable . ')", "warning")');
         }
         
-        $this->quantities[$watchId] = $quantity;
+        $this->quantities[$ProductId] = $quantity;
         $this->updateTotals();
     }
 
-    public function updateDiscount($watchId, $discount)
+    public function updateDiscount($ProductId, $discount)
     {
-        $this->discounts[$watchId] = max(0, min($discount, $this->cart[$watchId]['price']));
+        $this->discounts[$ProductId] = max(0, min($discount, $this->cart[$ProductId]['price']));
         $this->updateTotals();
     }
 
-    public function removeFromCart($watchId)
+    public function removeFromCart($ProductId)
     {
         
-        unset($this->cart[$watchId]);
-        unset($this->quantities[$watchId]);
-        unset($this->discounts[$watchId]);
+        unset($this->cart[$ProductId]);
+        unset($this->quantities[$ProductId]);
+        unset($this->discounts[$ProductId]);
         $this->updateTotals();
         
     }
 
-    public function showDetail($watchId)
+    public function showDetail($ProductId)
     {
-        $this->watchDetails = WatchDetail::join('watch_prices', 'watch_prices.watch_id', '=', 'watch_details.id')
-            ->join('watch_stocks', 'watch_stocks.watch_id', '=', 'watch_details.id')
-            ->join('watch_suppliers', 'watch_suppliers.id', '=', 'watch_details.supplier_id')
-            ->select('watch_details.*', 'watch_prices.*', 'watch_stocks.*', 'watch_suppliers.*', 'watch_suppliers.name as supplier_name')
-            ->where('watch_details.id', $watchId)
+        $this->ProductDetails = ProductDetail::join('Product_prices', 'Product_prices.Product_id', '=', 'Product_details.id')
+            ->join('Product_stocks', 'Product_stocks.Product_id', '=', 'Product_details.id')
+            ->join('Product_suppliers', 'Product_suppliers.id', '=', 'Product_details.supplier_id')
+            ->select('Product_details.*', 'Product_prices.*', 'Product_stocks.*', 'Product_suppliers.*', 'Product_suppliers.name as supplier_name')
+            ->where('Product_details.id', $ProductId)
             ->first();
 
         $this->js('$("#viewDetailModal").modal("show")');
@@ -250,7 +250,7 @@ class BillingPage extends Component
         $invalidItems = [];
         foreach ($this->cart as $id => $item) {
             // Get the latest stock directly from database
-            $currentStock = WatchStock::where('watch_id', $id)->value('available_stock');
+            $currentStock = ProductStock::where('Product_id', $id)->value('available_stock');
             
             if ($currentStock < $this->quantities[$id]) {
                 $invalidItems[] = $item['name'] . " (Requested: {$this->quantities[$id]}, Available: {$currentStock})";
@@ -291,18 +291,18 @@ class BillingPage extends Component
             $staffSale->save();
             
             // Create records for each product assigned
-            foreach ($this->cart as $watchId => $item) {
+            foreach ($this->cart as $ProductId => $item) {
                 $unitPrice = $item['discountPrice'] ?: $item['price'];
-                $totalDiscount = $this->discounts[$watchId] * $this->quantities[$watchId];
-                $totalValue = ($unitPrice * $this->quantities[$watchId]) - $totalDiscount;
+                $totalDiscount = $this->discounts[$ProductId] * $this->quantities[$ProductId];
+                $totalValue = ($unitPrice * $this->quantities[$ProductId]) - $totalDiscount;
                 
                 $staffProduct = new StaffProduct();
                 $staffProduct->staff_sale_id = $staffSale->id;
-                $staffProduct->watch_id = $watchId;
+                $staffProduct->Product_id = $ProductId;
                 $staffProduct->staff_id = $this->selectedStaffId;
-                $staffProduct->quantity = $this->quantities[$watchId];
+                $staffProduct->quantity = $this->quantities[$ProductId];
                 $staffProduct->unit_price = $unitPrice;
-                $staffProduct->discount_per_unit = $this->discounts[$watchId];
+                $staffProduct->discount_per_unit = $this->discounts[$ProductId];
                 $staffProduct->total_discount = $totalDiscount;
                 $staffProduct->total_value = $totalValue;
                 $staffProduct->sold_quantity = 0; // Initially 0
@@ -310,12 +310,12 @@ class BillingPage extends Component
                 $staffProduct->status = 'assigned';
                 $staffProduct->save();
                 
-                // Update watch stock
-                $watchStock = WatchStock::where('watch_id', $watchId)->first();
-                if ($watchStock) {
-                    $watchStock->available_stock -= $this->quantities[$watchId];
-                    $watchStock->assigned_stock = ($watchStock->assigned_stock ?? 0) + $this->quantities[$watchId];
-                    $watchStock->save();
+                // Update Product stock
+                $ProductStock = ProductStock::where('Product_id', $ProductId)->first();
+                if ($ProductStock) {
+                    $ProductStock->available_stock -= $this->quantities[$ProductId];
+                    $ProductStock->assigned_stock = ($ProductStock->assigned_stock ?? 0) + $this->quantities[$ProductId];
+                    $ProductStock->save();
                 }
             }
             

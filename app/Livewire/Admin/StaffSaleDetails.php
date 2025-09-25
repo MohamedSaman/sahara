@@ -47,15 +47,15 @@ class StaffSaleDetails extends Component
             ->first();
             
         // Get product-wise details
-        $this->productDetails = StaffProduct::join('watch_details', 'staff_products.watch_id', '=', 'watch_details.id')
+        $this->productDetails = StaffProduct::join('Product_details', 'staff_products.Product_id', '=', 'Product_details.id')
             ->where('staff_products.staff_id', $userId)
             ->select(
                 'staff_products.*',
-                'watch_details.name as watch_name',
-                'watch_details.brand as watch_brand',
-                'watch_details.model as watch_model',
-                'watch_details.code as watch_code',
-                'watch_details.image as watch_image'
+                'Product_details.name as Product_name',
+                'Product_details.brand as Product_brand',
+                'Product_details.model as Product_model',
+                'Product_details.code as Product_code',
+                'Product_details.image as Product_image'
             )
             ->get();
         
@@ -101,15 +101,15 @@ class StaffSaleDetails extends Component
         // Get all the necessary data for printing
         $staffDetails = DB::table('users')->where('id', $staffId)->first();
         $summaryStats = $this->getSummaryStats($staffId);
-        $productDetails = StaffProduct::join('watch_details', 'staff_products.watch_id', '=', 'watch_details.id')
+        $productDetails = StaffProduct::join('Product_details', 'staff_products.Product_id', '=', 'Product_details.id')
             ->where('staff_products.staff_id', $staffId)
             ->select(
                 'staff_products.*',
-                'watch_details.name as watch_name',
-                'watch_details.brand as watch_brand',
-                'watch_details.model as watch_model',
-                'watch_details.code as watch_code',
-                'watch_details.image as watch_image'
+                'Product_details.name as Product_name',
+                'Product_details.brand as Product_brand',
+                'Product_details.model as Product_model',
+                'Product_details.code as Product_code',
+                'Product_details.image as Product_image'
             )
             ->get();
         

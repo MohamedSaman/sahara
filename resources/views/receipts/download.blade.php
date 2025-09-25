@@ -155,9 +155,9 @@
     <div class="receipt-container">
         <!-- Receipt Header -->
         <div class="text-center mb-4">
-            <h2 class="mb-0">NEW WATCH COMPANY ( MR TRADING )</h2>
-            <p class="mb-0 text-muted small">NO 44 ,DOOLMALA ,THIHARIYA</p>
-            <p class="mb-0 text-muted small">Phone: (033) 228 7437 | Email:hakeem9053@gmail.com</p>
+            <h2 class="mb-0">ZAHARA INTERNATIONAL</h2>
+            <p class="mb-0 text-muted small">NO 14/A, YATIYANA ROAD,HORAGOLLA,NITTAMBUWA</p>
+            <p class="mb-0 text-muted small">Phone: (077) 3751785 | (033) 2297739 | Email: zahara.international@yahoo.com</p>
             <h3 class="mt-3 border-bottom pb-2">SALES RECEIPT</h3>
         </div>
         
@@ -189,7 +189,7 @@
         <table class="mb-4">
             <thead>
                 <tr>
-                    <th>#</th>
+                    <th>No</th>
                     <th>Item</th>
                     <th>Code</th>
                     <th>Price</th>
@@ -202,8 +202,8 @@
                 @foreach($sale->items as $index => $item)
                 <tr>
                     <td>{{ $index + 1 }}</td>
-                    <td>{{ $item->watch_name }}</td>
-                    <td>{{ $item->watch_code }}</td>
+                    <td>{{ $item->Product_name }}</td>
+                    <td>{{ $item->Product_code }}</td>
                     <td>Rs.{{ number_format($item->unit_price, 2) }}</td>
                     <td>{{ $item->quantity }}</td>
                     <td>Rs.{{ number_format($item->discount * $item->quantity, 2) }}</td>

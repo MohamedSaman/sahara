@@ -81,9 +81,9 @@
                             <!-- View toggle buttons - full width on mobile -->
                             <div class="btn-group w-100 w-md-auto" role="group">
                                 <button type="button" 
-                                    class="btn {{ $activeView == 'watches' ? 'btn-primary' : 'btn-outline-primary' }}" 
-                                    wire:click="switchView('watches')">
-                                    <i class="bi bi-watch me-1"></i> Watch View
+                                    class="btn {{ $activeView == 'Productes' ? 'btn-primary' : 'btn-outline-primary' }}" 
+                                    wire:click="switchView('Productes')">
+                                    <i class="bi bi-Product me-1"></i> Product View
                                 </button>
                                 <button type="button" 
                                     class="btn {{ $activeView == 'batches' ? 'btn-primary' : 'btn-outline-primary' }}" 
@@ -115,7 +115,7 @@
                                 <input type="text" 
                                     id="stockSearchInput"
                                     class="form-control border-start-0" 
-                                    placeholder="Search watches..."
+                                    placeholder="Search Productes..."
                                     autocomplete="off">
                             </div>
                         </div>
@@ -127,18 +127,18 @@
     
     <!-- Main Content -->
     <div class="row">
-        @if($activeView == 'watches')
+        @if($activeView == 'Productes')
             <div class="col-md-12">
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white">
-                        <h5 class="mb-0">Watch Stock Overview</h5>
+                        <h5 class="mb-0">Product Stock Overview</h5>
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover mb-0" id="watchViewTable">
+                            <table class="table table-striped table-hover mb-0" id="ProductViewTable">
                                 <thead class="table-light">
                                     <tr>
-                                        <th scope="col">Watch Details</th>
+                                        <th scope="col">Product Details</th>
                                         <th scope="col" class="text-center">Assigned</th>
                                         <th scope="col" class="text-center">Sold</th>
                                         <th scope="col" class="text-center">Remaining</th>
@@ -148,68 +148,68 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse($watches as $watchData)
+                                    @forelse($Productes as $ProductData)
                                         <tr>
                                             <td>
                                                 <div class="d-flex align-items-center">
-                                                    @if($watchData['watch']->image)
-                                                        <img src="{{ asset('public/storage/' . $watchData['watch']->image) }}" 
+                                                    @if($ProductData['Product']->image)
+                                                        <img src="{{ asset('storage/' . $ProductData['Product']->image) }}" 
                                                             class="rounded me-3" 
                                                             height="50" width="50" 
-                                                            alt="{{ $watchData['watch']->name }}">
+                                                            alt="{{ $ProductData['Product']->name }}">
                                                     @else
                                                         <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center" 
                                                             style="width: 50px; height: 50px;">
-                                                            <i class="bi bi-watch text-secondary"></i>
+                                                            <i class="bi bi-Product text-secondary"></i>
                                                         </div>
                                                     @endif
                                                     <div>
-                                                        <h6 class="mb-0">{{ $watchData['watch']->name }}</h6>
-                                                        <small class="text-muted d-block">{{ $watchData['watch']->code }}</small>
+                                                        <h6 class="mb-0">{{ $ProductData['Product']->name }}</h6>
+                                                        <small class="text-muted d-block">{{ $ProductData['Product']->code }}</small>
                                                         <div class="mt-1">
-                                                            <span class="badge bg-light text-dark">{{ $watchData['watch']->brand }}</span>
-                                                            @if($watchData['watch']->type)
-                                                                <span class="badge bg-light text-dark">{{ $watchData['watch']->type }}</span>
+                                                            <span class="badge bg-light text-dark">{{ $ProductData['Product']->brand }}</span>
+                                                            @if($ProductData['Product']->type)
+                                                                <span class="badge bg-light text-dark">{{ $ProductData['Product']->type }}</span>
                                                             @endif
                                                         </div>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td class="text-center align-middle">
-                                                <span class="fw-bold">{{ $watchData['total_quantity'] }}</span>
+                                                <span class="fw-bold">{{ $ProductData['total_quantity'] }}</span>
                                             </td>
                                             <td class="text-center align-middle">
-                                                <span class="fw-bold text-success">{{ $watchData['sold_quantity'] }}</span>
+                                                <span class="fw-bold text-success">{{ $ProductData['sold_quantity'] }}</span>
                                             </td>
                                             <td class="text-center align-middle">
-                                                <span class="fw-bold text-{{ $watchData['remaining_quantity'] > 0 ? 'warning' : 'muted' }}">
-                                                    {{ $watchData['remaining_quantity'] }}
+                                                <span class="fw-bold text-{{ $ProductData['remaining_quantity'] > 0 ? 'warning' : 'muted' }}">
+                                                    {{ $ProductData['remaining_quantity'] }}
                                                 </span>
                                             </td>
                                             <td class="align-middle" style="width: 20%">
                                                 <div class="d-flex justify-content-between mb-1">
-                                                    <small>{{ $watchData['progress_percentage'] }}% Complete</small>
+                                                    <small>{{ $ProductData['progress_percentage'] }}% Complete</small>
                                                 </div>
                                                 <div class="progress" style="height: 8px;">
                                                     <div class="progress-bar bg-{{ 
-                                                        $watchData['progress_percentage'] == 100 ? 'success' : 
-                                                        ($watchData['progress_percentage'] > 75 ? 'info' : 
-                                                        ($watchData['progress_percentage'] > 50 ? 'primary' : 
-                                                        ($watchData['progress_percentage'] > 25 ? 'warning' : 'danger'))) 
-                                                    }}" style="width: {{ $watchData['progress_percentage'] }}%"></div>
+                                                        $ProductData['progress_percentage'] == 100 ? 'success' : 
+                                                        ($ProductData['progress_percentage'] > 75 ? 'info' : 
+                                                        ($ProductData['progress_percentage'] > 50 ? 'primary' : 
+                                                        ($ProductData['progress_percentage'] > 25 ? 'warning' : 'danger'))) 
+                                                    }}" style="width: {{ $ProductData['progress_percentage'] }}%"></div>
                                                 </div>
                                             </td>
                                             <td class="text-end align-middle">
-                                                <span>Rs. {{ number_format($watchData['sold_value'], 2) }}</span>
+                                                <span>Rs. {{ number_format($ProductData['sold_value'], 2) }}</span>
                                                 <br/>
-                                                <small class="text-muted">of Rs. {{ number_format($watchData['total_value'], 2) }}</small>
+                                                <small class="text-muted">of Rs. {{ number_format($ProductData['total_value'], 2) }}</small>
                                             </td>
                                             <td class="text-center align-middle">
                                                 <span class="badge bg-{{ 
-                                                    $watchData['status'] == 'pending' ? 'warning' : 
-                                                    ($watchData['status'] == 'partial' ? 'info' : 'success') 
+                                                    $ProductData['status'] == 'pending' ? 'warning' : 
+                                                    ($ProductData['status'] == 'partial' ? 'info' : 'success') 
                                                 }}">
-                                                    {{ ucfirst($watchData['status']) }}
+                                                    {{ ucfirst($ProductData['status']) }}
                                                 </span>
                                             </td>
                                         </tr>
@@ -219,9 +219,9 @@
                                                 <i class="bi bi-inbox fs-1 text-muted"></i>
                                                 <p class="text-muted mt-2">
                                                     @if(empty($searchQuery))
-                                                        No watches have been assigned to you yet.
+                                                        No Productes have been assigned to you yet.
                                                     @else
-                                                        No watches match your search query.
+                                                        No Productes match your search query.
                                                     @endif
                                                 </p>
                                             </td>
@@ -317,7 +317,7 @@
                                 <table class="table table-striped table-hover mb-0" id="batchViewTable">
                                     <thead class="table-light">
                                         <tr>
-                                            <th scope="col">Watch Details</th>
+                                            <th scope="col">Product Details</th>
                                             <th scope="col" class="text-center">Assigned</th>
                                             <th scope="col" class="text-center">Sold</th>
                                             <th scope="col" class="text-center">Remaining</th>
@@ -331,21 +331,21 @@
                                             <tr>
                                                 <td>
                                                     <div class="d-flex align-items-center">
-                                                        @if($product->watch && $product->watch->image)
-                                                            <img src="{{ asset('public/storage/' . $product->watch->image) }}" 
+                                                        @if($product->Product && $product->Product->image)
+                                                            <img src="{{ asset('storage/' . $product->Product->image) }}" 
                                                                 class="rounded me-3" 
                                                                 height="40" width="40" 
-                                                                alt="{{ $product->watch->name }}">
+                                                                alt="{{ $product->Product->name }}">
                                                         @else
                                                             <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center" 
                                                                 style="width: 40px; height: 40px;">
-                                                                <i class="bi bi-watch text-secondary"></i>
+                                                                <i class="bi bi-Product text-secondary"></i>
                                                             </div>
                                                         @endif
                                                         <div>
-                                                            <h6 class="mb-0">{{ $product->watch->name ?? 'Unknown Watch' }}</h6>
-                                                            <small class="text-muted">{{ $product->watch->code ?? 'No Code' }}</small><br>
-                                                            <small class="text-muted">{{ $product->watch->brand ?? '' }}</small>
+                                                            <h6 class="mb-0">{{ $product->Product->name ?? 'Unknown Product' }}</h6>
+                                                            <small class="text-muted">{{ $product->Product->code ?? 'No Code' }}</small><br>
+                                                            <small class="text-muted">{{ $product->Product->brand ?? '' }}</small>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -482,32 +482,32 @@ document.addEventListener('DOMContentLoaded', function() {
         searchTerm = searchTerm.toLowerCase();
         
         // Determine which view is active
-        const isWatchView = document.querySelector('.btn-primary[wire\\:click="switchView(\'watches\')"]') !== null;
+        const isProductView = document.querySelector('.btn-primary[wire\\:click="switchView(\'Productes\')"]') !== null;
         
-        if (isWatchView) {
-            filterWatchView(searchTerm, statusFilter);
+        if (isProductView) {
+            filterProductView(searchTerm, statusFilter);
         } else {
             filterBatchView(searchTerm, statusFilter);
         }
     }
     
-    function filterWatchView(searchTerm, statusFilter) {
-        const watchTable = document.querySelector('#watchViewTable');
-        if (!watchTable) return;
+    function filterProductView(searchTerm, statusFilter) {
+        const ProductTable = document.querySelector('#ProductViewTable');
+        if (!ProductTable) return;
         
-        const rows = watchTable.querySelectorAll('tbody tr:not(.no-results-row)');
+        const rows = ProductTable.querySelectorAll('tbody tr:not(.no-results-row)');
         let visibleCount = 0;
         
         rows.forEach(row => {
-            const watchName = row.querySelector('h6.mb-0')?.textContent || '';
-            const watchCode = row.querySelector('small.text-muted')?.textContent || '';
-            const watchBrand = row.querySelector('.badge')?.textContent || '';
+            const ProductName = row.querySelector('h6.mb-0')?.textContent || '';
+            const ProductCode = row.querySelector('small.text-muted')?.textContent || '';
+            const ProductBrand = row.querySelector('.badge')?.textContent || '';
             const statusBadge = row.querySelector('td:last-child .badge')?.textContent?.toLowerCase() || '';
             
             const matchesSearch = searchTerm === '' || 
-                watchName.toLowerCase().includes(searchTerm) || 
-                watchCode.toLowerCase().includes(searchTerm) || 
-                watchBrand.toLowerCase().includes(searchTerm);
+                ProductName.toLowerCase().includes(searchTerm) || 
+                ProductCode.toLowerCase().includes(searchTerm) || 
+                ProductBrand.toLowerCase().includes(searchTerm);
                 
             const matchesStatus = statusFilter === 'all' || 
                 statusBadge.includes(statusFilter.toLowerCase());
@@ -520,7 +520,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        updateNoResultsMessage(watchTable, visibleCount, rows.length);
+        updateNoResultsMessage(ProductTable, visibleCount, rows.length);
     }
     
     function filterBatchView(searchTerm, statusFilter) {
@@ -531,18 +531,18 @@ document.addEventListener('DOMContentLoaded', function() {
         let visibleCount = 0;
         
         rows.forEach(row => {
-            const watchInfo = row.querySelector('td:first-child');
-            if (!watchInfo) return;
+            const ProductInfo = row.querySelector('td:first-child');
+            if (!ProductInfo) return;
             
-            const watchName = watchInfo.querySelector('h6')?.textContent || '';
-            const watchCode = watchInfo.querySelector('small:nth-child(1)')?.textContent || '';
-            const watchBrand = watchInfo.querySelector('small:nth-child(2)')?.textContent || '';
+            const ProductName = ProductInfo.querySelector('h6')?.textContent || '';
+            const ProductCode = ProductInfo.querySelector('small:nth-child(1)')?.textContent || '';
+            const ProductBrand = ProductInfo.querySelector('small:nth-child(2)')?.textContent || '';
             const statusBadge = row.querySelector('td:last-child .badge')?.textContent?.toLowerCase() || '';
             
             const matchesSearch = searchTerm === '' || 
-                watchName.toLowerCase().includes(searchTerm) || 
-                watchCode.toLowerCase().includes(searchTerm) || 
-                watchBrand.toLowerCase().includes(searchTerm);
+                ProductName.toLowerCase().includes(searchTerm) || 
+                ProductCode.toLowerCase().includes(searchTerm) || 
+                ProductBrand.toLowerCase().includes(searchTerm);
                 
             const matchesStatus = statusFilter === 'all' || 
                 statusBadge.includes(statusFilter.toLowerCase());
@@ -570,7 +570,7 @@ document.addEventListener('DOMContentLoaded', function() {
             newRow.innerHTML = `
                 <td colspan="7" class="text-center py-4">
                     <i class="bi bi-search fs-1 text-muted"></i>
-                    <p class="text-muted mt-2">No watches match your current filters.</p>
+                    <p class="text-muted mt-2">No Productes match your current filters.</p>
                 </td>
             `;
             tbody.appendChild(newRow);

@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\WatchDetail;
+use App\Models\ProductDetail;
 
 class StaffProduct extends Model
 {
@@ -12,7 +12,7 @@ class StaffProduct extends Model
 
     // Fillable fields for mass assignment
     protected $fillable = [
-        'watch_id',     // foreign key to watch_details
+        'Product_id',     // foreign key to Product_details
         'staff_id',
         'quantity',
         'price',
@@ -20,19 +20,19 @@ class StaffProduct extends Model
     ];
 
     /**
-     * Relationship: StaffProduct belongs to one WatchDetail
+     * Relationship: StaffProduct belongs to one ProductDetail
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function watchDetail()
+    public function ProductDetail()
     {
-        // 'watch_id' is the foreign key in staff_products table
-        // pointing to the 'id' of the watch_details table
-        return $this->belongsTo(WatchDetail::class, 'watch_id');
+        // 'Product_id' is the foreign key in staff_products table
+        // pointing to the 'id' of the Product_details table
+        return $this->belongsTo(ProductDetail::class, 'Product_id');
     }
-    public function watch()
+    public function Product()
 {
-    return $this->belongsTo(WatchDetail::class, 'watch_id');
+    return $this->belongsTo(ProductDetail::class, 'Product_id');
 }
     public function staffSale()
     {

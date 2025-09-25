@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\WatchDetail;
+use App\Models\ProductDetail;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -12,9 +12,9 @@ class SaleItem extends Model
 
     protected $fillable = [
         'sale_id',
-        'watch_id',
-        'watch_code',
-        'watch_name',
+        'Product_id',
+        'Product_code',
+        'Product_name',
         'quantity',
         'unit_price',
         'discount',
@@ -26,9 +26,9 @@ class SaleItem extends Model
         return $this->belongsTo(Sale::class);
     }
 
-    public function watch()
+    public function Product()
     {
-        return $this->belongsTo(WatchDetail::class, 'watch_id');
+        return $this->belongsTo(ProductDetail::class, 'Product_id');
     }
 
 }

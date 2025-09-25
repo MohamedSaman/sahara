@@ -228,10 +228,9 @@
             <div class="table-responsive">
                 <table class="table table-hover">
                     <thead>
-                        <th scope="col" class="text-center">#</th>
+                        <th scope="col" class="text-center">No</th>
                         <th scope="col" class="text-center">ProductName</th>
                         <th scope="col" class="text-center">Code</th>
-                        <th scope="col" class="text-center">Barcode</th>
                         <th scope="col" class="text-center">Brand</th>
                         <th scope="col" class="text-center">Model</th>
                         <th scope="col" class="text-center">Color</th>
@@ -249,7 +248,6 @@
                                     <td class="text-center">{{ $loop->iteration }}</td>
                                     <td class="text-center">{{ $Product->Product_name }}</td>
                                     <td class="text-center">{{ $Product->code }}</td>
-                                    <td class="text-center">{{ $Product->barcode }}</td>
                                     <td class="text-center">{{ $Product->brand }}</td>
                                     <td class="text-center">{{ $Product->model }}</td>
                                     <td class="text-center">{{ $Product->color }}</td>
@@ -293,7 +291,7 @@
                             @endforeach
                         @else
                             <tr>
-                                <td colspan="4" class="text-center">
+                                <td colspan="12" class="text-center">
                                     <div class="alert alert-primary bg-opacity-10 my-2">
                                         <i class="bi bi-info-circle me-2"></i> No Productes found.
                                     </div>
@@ -306,6 +304,8 @@
                     {{ $Productes->links('livewire.custom-pagination') }}
                 </div>
             </div>
+
+
             {{-- <!-- Create Product Modal --> --}}
             <div wire:ignore.self class="modal fade" id="createProductModal" tabindex="-1"
                 aria-labelledby="createProductModalLabel" aria-hidden="true">
@@ -460,10 +460,10 @@
                             <!-- Technical Specifications Card -->
                             <div class="card mb-4 shadow border border-primary">
                                 <div class="card-header bg-primary bg-opacity-10">
-                                    <h5 class="card-title mb-0 text-primary">Technical Specifications</h5>
+                                    <h5 class="card-title mb-0 text-primary">Features</h5>
                                 </div>
                                 <div class="card-body p-4">
-                                    <div class="row">
+                                    {{-- <div class="row">
                                         <div class="col-md-4">
                                             <div class="mb-3">
                                                 <label for="movement" class="form-label fw-bold">Movement:</label>
@@ -524,15 +524,14 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                     <div class="row">
                                         <div class="col-md-4">
                                             <div class="mb-3">
-                                                <label for="strapMaterial" class="form-label fw-bold">Strap
-                                                    Material:</label>
+                                                <label for="strapMaterial" class="form-label fw-bold">Material:</label>
                                                 <select class="form-select" id="strapMaterial"
                                                     wire:model="strapMaterial">
-                                                    <option value="">Select Strap Material</option>
+                                                    <option value="">Select Material</option>
                                                     @foreach ($ProductStrapMaterials as $material)
                                                         <option value="{{ $material->strap_material_name }}">
                                                             {{ $material->strap_material_name }}
@@ -548,6 +547,16 @@
                                             </div>
                                         </div>
                                         <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="features" class="form-label fw-bold">Features:</label>
+                                                <input type="text" class="form-control" id="features"
+                                                    wire:model="features">
+                                                @error('features')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        {{-- <div class="col-md-4">
                                             <div class="mb-3">
                                                 <label for="caseDiameter" class="form-label fw-bold">Case Diameter
                                                     (mm):</label>
@@ -568,10 +577,10 @@
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
                                             </div>
-                                        </div>
+                                        </div> --}}
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-4">
+                                        {{-- <div class="col-md-4">
                                             <div class="mb-3">
                                                 <label for="glassType" class="form-label fw-bold">Glass Type:</label>
                                                 <select class="form-select" id="glassType" wire:model="glassType">
@@ -597,17 +606,7 @@
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
                                             </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="mb-3">
-                                                <label for="features" class="form-label fw-bold">Features:</label>
-                                                <input type="text" class="form-control" id="features"
-                                                    wire:model="features">
-                                                @error('features')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                        </div>
+                                        </div> --}}                        
                                     </div>
                                 </div>
                             </div>
@@ -655,7 +654,7 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        {{-- <div class="col-md-4">
                                             <div class="mb-3">
                                                 <label for="warranty" class="form-label fw-bold">Warranty:</label>
                                                 <input type="text" class="form-control" id="warranty"
@@ -674,7 +673,7 @@
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
                                             </div>
-                                        </div>
+                                        </div> --}}
                                     </div>
                                     <div class="row">
                                         <div class="col-md-12">
@@ -777,7 +776,7 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                             <div class="mb-3">
-                                                <label for="storeStock" class="form-label fw-bold">Store
+                                                <label for="storeStock" class="form-label fw-bold">Available
                                                     Stock:</label>
                                                 <input type="number" class="form-control" id="storeStock"
                                                     wire:model="storeStock">
@@ -812,7 +811,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
+                                    {{--<div class="row">
                                         <div class="col-md-12">
                                             <div class="mb-3">
                                                 <label for="location" class="form-label fw-bold">Store
@@ -824,7 +823,7 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                    </div>
+                                    </div>--}}
                                 </div>
                             </div>
                         </div>
@@ -895,7 +894,7 @@
                                         <div class="col-md-4 border-end">
                                             <div class="position-relative h-100">
                                                 @if ($ProductDetails->image)
-                                                    <img src="{{ asset('public/storage/' . $ProductDetails->image) }}"
+                                                    <img src="{{ asset('storage/' . $ProductDetails->image) }}"
                                                         alt="{{ $ProductDetails->Product_name }}"
                                                         class="img-fluid rounded-start h-100 w-100 object-fit-cover">
                                                 @else
@@ -1049,30 +1048,30 @@
                                                                     {{ $ProductDetails->made_by }}
                                                                 </td>
                                                             </tr>
-                                                            <tr>
+                                                            <!-- <tr>
                                                                 <th class="text-muted">Movement</th>
                                                                 <td class="text-primary fw-medium">
                                                                     {{ $ProductDetails->movement }}
                                                                 </td>
-                                                            </tr>
+                                                            </tr> -->
                                                             <tr>
                                                                 <th class="text-muted">Type</th>
                                                                 <td class="text-primary fw-medium">
                                                                     {{ $ProductDetails->type }}
                                                                 </td>
                                                             </tr>
-                                                            <tr>
+                                                            <!-- <tr>
                                                                 <th class="text-muted">Dial Color</th>
                                                                 <td class="text-primary fw-medium">
                                                                     {{ $ProductDetails->dial_color }}
                                                                 </td>
-                                                            </tr>
-                                                            <tr>
+                                                            </tr> -->
+                                                            <!-- <tr>
                                                                 <th class="text-muted">Water Resistance</th>
                                                                 <td class="text-primary fw-medium">
                                                                     {{ $ProductDetails->water_resistance }}
                                                                 </td>
-                                                            </tr>
+                                                            </tr> -->
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -1080,37 +1079,37 @@
                                                 <div class="col-md-6">
                                                     <table class="table table-borderless">
                                                         <tbody>
-                                                            <tr>
+                                                            <!-- <tr>
                                                                 <th class="text-muted" width="40%">Case Diameter
                                                                 </th>
                                                                 <td class="text-primary fw-medium">
                                                                     {{ $ProductDetails->case_diameter_mm }} mm
                                                                 </td>
-                                                            </tr>
-                                                            <tr>
+                                                            </tr> -->
+                                                            <!-- <tr>
                                                                 <th class="text-muted">Case Thickness</th>
                                                                 <td class="text-primary fw-medium">
                                                                     {{ $ProductDetails->case_thickness_mm }} mm
                                                                 </td>
-                                                            </tr>
-                                                            <tr>
+                                                            </tr> -->
+                                                            <!-- <tr>
                                                                 <th class="text-muted">Glass Type</th>
                                                                 <td class="text-primary fw-medium">
                                                                     {{ $ProductDetails->glass_type }}
                                                                 </td>
-                                                            </tr>
+                                                            </tr> -->
                                                             <tr>
-                                                                <th class="text-muted">Strap Material</th>
+                                                                <th class="text-muted">Product Material</th>
                                                                 <td class="text-primary fw-medium">
                                                                     {{ $ProductDetails->strap_material }}
                                                                 </td>
                                                             </tr>
-                                                            <tr>
+                                                            <!-- <tr>
                                                                 <th class="text-muted">Strap Color</th>
                                                                 <td class="text-primary fw-medium">
                                                                     {{ $ProductDetails->strap_color }}
                                                                 </td>
-                                                            </tr>
+                                                            </tr> -->
                                                             <tr>
                                                                 <th class="text-muted">Features</th>
                                                                 <td class="text-primary fw-medium">
@@ -1182,7 +1181,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6">
+                                                {{--<div class="col-md-6">
                                                     <div class="card mb-3 border-info">
                                                         <div class="card-body">
                                                             <div class="d-flex justify-content-between">
@@ -1193,7 +1192,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </div>--}}
                                             </div>
                                         </div>
                                     </div>
@@ -1231,7 +1230,7 @@
                                                                 <td class="text-primary fw-medium">
                                                                     {{ $ProductDetails->contact ?: 'N/A' }}</td>
                                                             </tr>
-                                                            <tr>
+                                                            <!-- <tr>
                                                                 <th class="text-muted">Barcode</th>
                                                                 <td class="text-primary fw-medium">
                                                                     {{ $ProductDetails->barcode }}</td>
@@ -1240,7 +1239,7 @@
                                                                 <th class="text-muted">Warranty</th>
                                                                 <td class="text-primary fw-medium">
                                                                     {{ $ProductDetails->warranty }}</td>
-                                                            </tr>
+                                                            </tr> -->
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -1581,78 +1580,17 @@
                     {{-- Technical Specifications --}}
                     <div class="card mb-4 shadow border border-primary">
                         <div class="card-header bg-primary bg-opacity-10">
-                            <h5 class="card-title mb-0 text-primary">Technical Specifications</h5>
+                            <h5 class="card-title mb-0 text-primary">Fea</h5>
                         </div>
                         <div class="card-body p-4">
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label for="editMovement" class="form-label fw-bold">Movement:</label>
-                                        <select wire:model="editMovement" id="editMovement" class="form-select">
-                                            <option value="">Select Movement</option>
-                                            <option value="Mechanical">Mechanical</option>
-                                            <option value="Quartz">Quartz</option>
-                                            <option value="Automatic">Automatic</option>
-                                            <option value="PC">PC</option>
-                                            <option value="SL68">SL68</option>
-                                            <option value="2035 japan">2035 japan</option>
-                                            <option value="2030 japan">2030 japan</option>
-                                            <option value="VGA quartz">VGA quartz</option>
-                                            <option value="SL68 DATE">SL68 DATE</option>
-                                            <option value="SL68 DAY & DATE">SL68 DAY & DATE</option>
-                                            <option value="2035 DATE">2035 DATE</option>
-                                            <option value="2035 DAY & DATE">2035 DAY & DATE</option>
-                                        </select>
-                                        @error('editMovement')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="editDialColor" class="form-label fw-bold">Dial Color:</label>
-                                        <select class="form-select" id="editDialColor" wire:model="editDialColor">
-                                            <option value="">Select Dial Color</option>
-                                            @foreach ($ProductDialColors as $dialColor)
-                                                <option value="{{ $dialColor->dial_color_name }}">
-                                                    {{ $dialColor->dial_color_name }}
-                                                    @if (isset($dialColor->dial_color_code))
-                                                        ({{ $dialColor->dial_color_code }})
-                                                    @endif
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('editDialColor')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="editStrapColor" class="form-label fw-bold">Strap
-                                            Color:</label>
-                                        <select class="form-select" id="editStrapColor" wire:model="editStrapColor">
-                                            <option value="">Select Strap Color</option>
-                                            @foreach ($ProductStrapColors as $strapColor)
-                                                <option value="{{ $strapColor->strap_color_name }}">
-                                                    {{ $strapColor->strap_color_name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('editStrapColor')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="editStrapMaterial" class="form-label fw-bold">Strap
+                                        <label for="editStrapMaterial" class="form-label fw-bold">Product
                                             Material:</label>
                                         <select class="form-select" id="editStrapMaterial"
                                             wire:model="editStrapMaterial">
-                                            <option value="">Select Strap Material</option>
+                                            <option value="">Select Product Material</option>
                                             @foreach ($ProductStrapMaterials as $material)
                                                 <option value="{{ $material->strap_material_name }}">
                                                     {{ $material->strap_material_name }}
@@ -1667,58 +1605,7 @@
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="editCaseDiameter" class="form-label fw-bold">Case Diameter
-                                            (mm):</label>
-                                        <input type="number" step="0.1" class="form-control"
-                                            id="editCaseDiameter" wire:model="editCaseDiameter">
-                                        @error('editCaseDiameter')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="editCaseThickness" class="form-label fw-bold">Case Thickness
-                                            (mm):</label>
-                                        <input type="number" step="0.1" class="form-control"
-                                            id="editCaseThickness" wire:model="editCaseThickness">
-                                        @error('editCaseThickness')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="editGlassType" class="form-label fw-bold">Glass Type:</label>
-                                        <select class="form-select" id="editGlassType" wire:model="editGlassType">
-                                            <option value="">Select Glass Type</option>
-                                            @foreach ($ProductGlassTypes as $glass)
-                                                <option value="{{ $glass->glass_type_name }}">
-                                                    {{ $glass->glass_type_name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('editGlassType')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="editWaterResistance" class="form-label fw-bold">Water
-                                            Resistance:</label>
-                                        <input type="text" class="form-control" id="editWaterResistance"
-                                            wire:model="editWaterResistance">
-                                        @error('editWaterResistance')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="editFeatures" class="form-label fw-bold">Features:</label>
                                         <input type="text" class="form-control" id="editFeatures"
@@ -1776,7 +1663,7 @@
                                                 @endif
                                             @elseif($existingImage)
                                                 <div class="mb-2">Current image:</div>
-                                                <img src="{{ asset('public/storage/' . $existingImage) }}"
+                                                <img src="{{ asset('storage/' . $existingImage) }}"
                                                     class="img-thumbnail" style="height: 100px">
                                             @endif
                                         </div>
@@ -1787,17 +1674,8 @@
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="editWarranty" class="form-label fw-bold">Warranty:</label>
-                                        <input type="text" class="form-control" id="editWarranty"
-                                            wire:model="editWarranty">
-                                        @error('editWarranty')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
+                                
+                               {{-- <div class="col-md-4">
                                     <div class="mb-3">
                                         <label for="editBarcode" class="form-label fw-bold">Barcode:</label>
                                         <input type="text" class="form-control" id="editBarcode"
@@ -1806,7 +1684,7 @@
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
-                                </div>
+                                </div>--}}
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
@@ -1917,7 +1795,7 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <label for="editStoreStock" class="form-label fw-bold">Store
+                                        <label for="editStoreStock" class="form-label fw-bold">Available
                                             Stock:</label>
                                         <input type="number" class="form-control" id="editStoreStock"
                                             wire:model="editStoreStock">
@@ -1945,17 +1823,6 @@
                                             <option value="inactive">Inactive</option>
                                         </select>
                                         @error('editStatus')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label for="editLocation" class="form-label fw-bold">Store
-                                            Location:</label>
-                                        <input type="text" class="form-control" id="editLocation"
-                                            wire:model="editLocation">
-                                        @error('editLocation')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>

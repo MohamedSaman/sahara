@@ -216,7 +216,7 @@
                                                         <div class="d-flex align-items-center">
                                                             @if ($product->watch_image)
                                                                 <div class="me-2" style="width: 40px; height: 40px;">
-                                                                    <img src="{{ asset('public/storage/' . $product->watch_image) }}"
+                                                                    <img src="{{ asset('storage/' . $product->watch_image) }}"
                                                                         class="img-fluid rounded"
                                                                         alt="{{ $product->watch_name }}"
                                                                         style="width: 100%; height: 100%; object-fit: cover;">

@@ -6,7 +6,7 @@
         <table class="table table-striped mb-0">
             <thead>
                 <tr>
-                    <th>Watch Name</th>
+                    <th>Product Name</th>
                     <th>Model</th>
                     <th>Brand</th>
                     <th>Available</th>
@@ -14,13 +14,13 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse($data as $watch)
+                @forelse($data as $Product)
                     <tr>
-                        <td>{{ $watch->name ?? '-' }}</td>
-                        <td>{{ $watch->model ?? '-' }}</td>
-                        <td>{{ $watch->brand ?? '-' }}</td>
-                        <td>{{ $watch->available_stock ?? '-' }}</td>
-                        <td>{{ $watch->total_stock ?? '-' }}</td>
+                        <td>{{ $Product->name ?? '-' }}</td>
+                        <td>{{ $Product->model ?? '-' }}</td>
+                        <td>{{ $Product->brand ?? '-' }}</td>
+                        <td>{{ $Product->available_stock ?? '-' }}</td>
+                        <td>{{ $Product->total_stock ?? '-' }}</td>
                     </tr>
                 @empty
                     <tr>

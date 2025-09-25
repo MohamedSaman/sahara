@@ -542,7 +542,7 @@
                     @php
                         $extension = pathinfo($selectedPayment->due_payment_attachment, PATHINFO_EXTENSION);
                         $isPdf = strtolower($extension) === 'pdf';
-                        $fileUrl = asset('public/storage/' . str_replace('public/', '', $selectedPayment->due_payment_attachment));
+                        $fileUrl = asset('storage/' . str_replace('public/', '', $selectedPayment->due_payment_attachment));
                     @endphp
                     @if (!$isPdf)
                         <button type="button" class="btn btn-sm btn-light" onclick="openFullImage('{{ $fileUrl }}')">
@@ -618,15 +618,15 @@
                         @foreach ($selectedPayment->sale->items as $item)
                             <tr>
                                 <td class="ps-3">
-                                    @if ($item->watch)
+                                    @if ($item->Product)
                                         <p class="text-sm mb-0">
-                                            {{ $item->watch->brand ?? 'Unknown Brand' }}
-                                            {{ $item->watch->model ?? 'Unknown Model' }}
+                                            {{ $item->Product->brand ?? 'Unknown Brand' }}
+                                            {{ $item->Product->model ?? 'Unknown Model' }}
                                         </p>
-                                        <span class="text-xs text-muted">{{ $item->watch->code ?? 'N/A' }}</span>
+                                        <span class="text-xs text-muted">{{ $item->Product->code ?? 'N/A' }}</span>
                                     @else
                                         <p class="text-sm mb-0">
-                                            {{ $item->watch_name ?? 'Watch Details Unavailable' }}
+                                            {{ $item->Product_name ?? 'Product Details Unavailable' }}
                                         </p>
                                         <span class="text-xs text-danger">Item record may have been deleted</span>
                                     @endif

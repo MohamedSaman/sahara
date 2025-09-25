@@ -585,7 +585,7 @@
                         <ul class="nav flex-column ms-3">
                             <li class="nav-item">
                                 <a class="nav-link py-2" href="{{ route('admin.Productes') }}">
-                                    <i class="bi bi-Product"></i> <span>Product Details</span>
+                                    <i class="bi bi-box-seam"></i> <span>Product Details</span>
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -603,12 +603,12 @@
                                     <i class="bi bi-collection"></i> <span>Product Category</span>
                                 </a>
                             </li>
-                            <li class="nav-item">
+                           <!-- <li class="nav-item">
                                 <a class="nav-link py-2" href="{{ route('admin.Product-dial-color') }}">
                                     <i class="bi bi-circle-half"></i> <span>Product Dial Color</span>
                                 </a>
-                            </li>
-                            <li class="nav-item">
+                            </li> -->
+                            <!-- <li class="nav-item">
                                 <a class="nav-link py-2" href="{{ route('admin.Product-glass-type') }}">
                                     <i class="bi bi-diamond"></i> <span>Product Glass Type</span>
                                 </a>
@@ -617,10 +617,10 @@
                                 <a class="nav-link py-2" href="{{ route('admin.Product-strap-color') }}">
                                     <i class="bi bi-paint-bucket"></i> <span>Product Strap Color</span>
                                 </a>
-                            </li>
+                            </li> -->
                             <li class="nav-item">
                                 <a class="nav-link py-2" href="{{ route('admin.Product-strap-material') }}">
-                                    <i class="bi bi-link"></i> <span>Product Strap Material</span>
+                                    <i class="bi bi-link"></i> <span>Product Material</span>
                                 </a>
                             </li>
                             <li class="nav-item">

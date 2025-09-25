@@ -11,4 +11,20 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    server: {
+        hmr: {
+            overlay: false
+        },
+        // Windows-specific configuration to reduce warnings
+        fs: {
+            strict: false
+        }
+    },
+    // Suppress forking warnings on Windows
+    define: {
+        global: 'globalThis',
+    },
+    optimizeDeps: {
+        force: true
+    }
 });

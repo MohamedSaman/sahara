@@ -14,7 +14,7 @@ class ProductStockDetails extends Component
 {
     public function render()
     {
-        $ProductStocks = ProductStock::join('Product_details', 'Product_stocks.Product_id', '=', 'Product_details.id')
+        $ProductStocks = ProductStock::join('Product_details', 'product_stocks.product_id', '=', 'Product_details.id')
             ->select('Product_stocks.*', 'Product_details.name as Product_name', 'Product_details.brand as Product_brand','Product_details.model as Product_model', 'Product_details.code as Product_code', 'Product_details.image as Product_image')
             ->get();
         return view('livewire.admin.Product-stock-details',[
@@ -25,7 +25,7 @@ class ProductStockDetails extends Component
     public function exportToCSV()
     {
         // Get data
-        $ProductStocks = ProductStock::join('Product_details', 'Product_stocks.Product_id', '=', 'Product_details.id')
+        $ProductStocks = ProductStock::join('Product_details', 'product_stocks.product_id', '=', 'Product_details.id')
             ->select('Product_details.name', 'Product_details.code', 'Product_details.brand', 'Product_details.model', 
                     'Product_stocks.total_stock', 'Product_stocks.available_stock', 
                     'Product_stocks.sold_count', 'Product_stocks.damage_stock')

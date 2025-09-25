@@ -12,15 +12,15 @@ class ProductStock extends Model
     
     protected $fillable = [
         'shop_stock', 'store_stock', 'damage_stock', 
-        'total_stock', 'available_stock', 'Product_id','sold_count','assigned_stock',
+        'total_stock', 'available_stock', 'product_id','sold_count','assigned_stock',
     ];
     
     /**
      * Get the Product that owns this stock information
      */
-    public function Product(): BelongsTo
+    public function product(): BelongsTo
     {
-        return $this->belongsTo(ProductDetail::class, 'Product_id');
+        return $this->belongsTo(ProductDetail::class, 'product_id');
     }
     
     /**

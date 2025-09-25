@@ -93,7 +93,7 @@ class Billing extends Component
 public function updatedSearch()
 {
     if (strlen($this->search) >= 2) {
-        $this->searchResults = ProductDetail::join('staff_products', 'staff_products.Product_id', '=', 'Product_details.id')
+        $this->searchResults = ProductDetail::join('staff_products', 'staff_products.product_id', '=', 'Product_details.id')
             ->join('staff_sales', 'staff_sales.id', '=', 'staff_products.staff_sale_id')
             ->select(
                 'Product_details.id',
@@ -145,7 +145,7 @@ public function updatedSearch()
 public function addToCart($ProductId)
 {
     // Get total available stock across all assigned entries for this product
-    $Product = ProductDetail::join('staff_products', 'staff_products.Product_id', '=', 'Product_details.id')
+    $Product = ProductDetail::join('staff_products', 'staff_products.product_id', '=', 'Product_details.id')
         ->where('Product_details.id', $ProductId)
         ->where('staff_products.staff_id', auth()->id())
         ->where('staff_products.status', '!=', 'completed')
@@ -294,7 +294,7 @@ public function addToCart($ProductId)
 
     public function showDetail($ProductId)
     {
-        $this->ProductDetails = ProductDetail::join('staff_products', 'staff_products.Product_id', '=', 'Product_details.id')
+        $this->ProductDetails = ProductDetail::join('staff_products', 'staff_products.product_id', '=', 'Product_details.id')
             ->join('Product_suppliers', 'Product_suppliers.id', '=', 'Product_details.supplier_id')
             ->select(
                 'Product_details.*', 
@@ -617,8 +617,8 @@ public function addToCart($ProductId)
 foreach ($this->cart as $id => $item) {
     $requestedQty = $this->quantities[$id];
 
-    // 🔎 Get total available stock for this Product_id from all staff_products
-    $availableStock = StaffProduct::where('Product_id', $item['id'])
+    // 🔎 Get total available stock for this product_id from all staff_products
+    $availableStock = StaffProduct::where('product_id', $item['id'])
         ->where('staff_id', auth()->id())
         ->where('status', '!=', 'completed')
         ->selectRaw('SUM(quantity - sold_quantity) as total_available')
@@ -633,7 +633,7 @@ foreach ($this->cart as $id => $item) {
     $unitPrice = $item['price'];
 
     // 🧠 Loop through all staff_product entries and consume from them
-    $staffProducts = StaffProduct::where('Product_id', $item['id'])
+    $staffProducts = StaffProduct::where('product_id', $item['id'])
         ->where('staff_id', auth()->id())
         ->where('status', '!=', 'completed')
         ->orderBy('id') // or priority field
@@ -649,7 +649,7 @@ foreach ($this->cart as $id => $item) {
         // 💾 Save SaleItem
         SaleItem::create([
             'sale_id' => $sale->id,
-            'Product_id' => $item['id'],
+            'product_id' => $item['id'],
             'Product_code' => $item['code'],
             'Product_name' => $item['name'],
             'quantity' => $useQty,
@@ -690,7 +690,7 @@ foreach ($this->cart as $id => $item) {
                 }
                 
                 // Also update the main inventory
-                $ProductStock = ProductStock::where('Product_id', $item['id'])->first();
+                $ProductStock = ProductStock::where('product_id', $item['id'])->first();
                 if ($ProductStock) {
                     $ProductStock->sold_count += $this->quantities[$id];
                     $ProductStock->save();

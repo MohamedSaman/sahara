@@ -76,8 +76,8 @@ class StaffStockOverview extends Component
             ->with(['Product', 'staffSale.admin'])
             ->get();
 
-        // Group products by Product_id and aggregate quantities
-        $ProductGroups = $staffProducts->groupBy('Product_id');
+        // Group products by product_id and aggregate quantities
+        $ProductGroups = $staffProducts->groupBy('product_id');
         $Productes = collect();
         
         

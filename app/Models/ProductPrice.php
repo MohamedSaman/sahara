@@ -10,14 +10,14 @@ class ProductPrice extends Model
 {
     use HasFactory;
     
-    protected $fillable = ['supplier_price', 'selling_price', 'discount_price', 'Product_id'];
+    protected $fillable = ['supplier_price', 'selling_price', 'discount_price', 'product_id'];
     
     /**
      * Get the Product that owns this price information
      */
-    public function Product(): BelongsTo
+    public function product(): BelongsTo
     {
-        return $this->belongsTo(ProductDetail::class, 'Product_id');
+        return $this->belongsTo(ProductDetail::class, 'product_id');
     }
     
     /**

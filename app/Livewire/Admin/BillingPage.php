@@ -103,11 +103,11 @@ class BillingPage extends Component
     public function updatedSearch()
     {
         if (strlen($this->search) >= 2) {
-            $this->searchResults = ProductDetail::join('Product_prices', 'Product_prices.Product_id', '=', 'Product_details.id')
-                ->join('Product_stocks', 'Product_stocks.Product_id', '=', 'Product_details.id')
-                ->select('Product_details.*', 'Product_prices.selling_price', 'Product_prices.discount_price', 'Product_stocks.available_stock')
+            $this->searchResults = ProductDetail::join('Product_prices', 'Product_prices.product_id', '=', 'Product_details.id')
+                ->join('product_stocks', 'product_stocks.product_id', '=', 'Product_details.id')
+                ->select('Product_details.*', 'Product_prices.selling_price', 'Product_prices.discount_price', 'product_stocks.available_stock')
                 ->where('Product_details.status', '=', 'active')
-                ->where('Product_stocks.available_stock', '>', 0) // Only show products with stock > 0
+                ->where('product_stocks.available_stock', '>', 0) // Only show products with stock > 0
                 ->where(function($query) {
                     $query->where('Product_details.code', 'like', '%' . $this->search . '%')
                         ->orWhere('Product_details.model', 'like', '%' . $this->search . '%')
@@ -124,11 +124,11 @@ class BillingPage extends Component
 
     public function addToCart($ProductId)
     {
-        $Product = ProductDetail::join('Product_prices', 'Product_prices.Product_id', '=', 'Product_details.id')
-            ->join('Product_stocks', 'Product_stocks.Product_id', '=', 'Product_details.id')
+        $Product = ProductDetail::join('Product_prices', 'Product_prices.product_id', '=', 'Product_details.id')
+            ->join('product_stocks', 'product_stocks.product_id', '=', 'Product_details.id')
             ->where('Product_details.id', $ProductId)
             ->select('Product_details.*', 'Product_prices.selling_price', 'Product_prices.discount_price', 
-                     'Product_stocks.available_stock')
+                     'product_stocks.available_stock')
             ->first();
 
         if (!$Product || $Product->available_stock <= 0) {
@@ -207,10 +207,10 @@ class BillingPage extends Component
 
     public function showDetail($ProductId)
     {
-        $this->ProductDetails = ProductDetail::join('Product_prices', 'Product_prices.Product_id', '=', 'Product_details.id')
-            ->join('Product_stocks', 'Product_stocks.Product_id', '=', 'Product_details.id')
+        $this->ProductDetails = ProductDetail::join('Product_prices', 'Product_prices.product_id', '=', 'Product_details.id')
+            ->join('product_stocks', 'product_stocks.product_id', '=', 'Product_details.id')
             ->join('Product_suppliers', 'Product_suppliers.id', '=', 'Product_details.supplier_id')
-            ->select('Product_details.*', 'Product_prices.*', 'Product_stocks.*', 'Product_suppliers.*', 'Product_suppliers.name as supplier_name')
+            ->select('Product_details.*', 'Product_prices.*', 'product_stocks.*', 'Product_suppliers.*', 'Product_suppliers.name as supplier_name')
             ->where('Product_details.id', $ProductId)
             ->first();
 
@@ -250,7 +250,7 @@ class BillingPage extends Component
         $invalidItems = [];
         foreach ($this->cart as $id => $item) {
             // Get the latest stock directly from database
-            $currentStock = ProductStock::where('Product_id', $id)->value('available_stock');
+            $currentStock = ProductStock::where('product_id', $id)->value('available_stock');
             
             if ($currentStock < $this->quantities[$id]) {
                 $invalidItems[] = $item['name'] . " (Requested: {$this->quantities[$id]}, Available: {$currentStock})";
@@ -298,7 +298,7 @@ class BillingPage extends Component
                 
                 $staffProduct = new StaffProduct();
                 $staffProduct->staff_sale_id = $staffSale->id;
-                $staffProduct->Product_id = $ProductId;
+                $staffProduct->product_id = $ProductId;
                 $staffProduct->staff_id = $this->selectedStaffId;
                 $staffProduct->quantity = $this->quantities[$ProductId];
                 $staffProduct->unit_price = $unitPrice;
@@ -311,7 +311,7 @@ class BillingPage extends Component
                 $staffProduct->save();
                 
                 // Update Product stock
-                $ProductStock = ProductStock::where('Product_id', $ProductId)->first();
+                $ProductStock = ProductStock::where('product_id', $ProductId)->first();
                 if ($ProductStock) {
                     $ProductStock->available_stock -= $this->quantities[$ProductId];
                     $ProductStock->assigned_stock = ($ProductStock->assigned_stock ?? 0) + $this->quantities[$ProductId];

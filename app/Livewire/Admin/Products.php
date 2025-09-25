@@ -90,8 +90,8 @@ class Products extends Component
     public function render()
     {
         $Productes = ProductDetail::join('Product_suppliers', 'Product_details.supplier_id', '=', 'Product_suppliers.id')
-            ->join('Product_prices', 'Product_details.id', '=', 'Product_prices.Product_id')
-            ->join('Product_stocks', 'Product_details.id', '=', 'Product_stocks.Product_id')
+            ->join('Product_prices', 'Product_details.id', '=', 'Product_prices.product_id')
+            ->join('product_stocks', 'Product_details.id', '=', 'product_stocks.product_id')
             ->select(
                 'Product_details.id',
                 'Product_details.code',
@@ -169,8 +169,8 @@ class Products extends Component
     {
         // Find the Product with its related data
         $this->ProductDetails = ProductDetail::join('Product_suppliers', 'Product_details.supplier_id', '=', 'Product_suppliers.id')
-            ->join('Product_prices', 'Product_details.id', '=', 'Product_prices.Product_id')
-            ->join('Product_stocks', 'Product_details.id', '=', 'Product_stocks.Product_id')
+            ->join('Product_prices', 'Product_details.id', '=', 'Product_prices.product_id')
+            ->join('Product_stocks', 'Product_details.id', '=', 'product_stocks.product_id')
             ->select(
                 'Product_details.id',
                 'Product_details.code',
@@ -279,7 +279,7 @@ class Products extends Component
                 'supplier_price' => $this->supplierPrice ?? 0,
                 'selling_price' => $this->sellingPrice,
                 'discount_price' => $this->discountPrice,
-                'Product_id' => $Product->id
+                'product_id' => $Product->id
             ]);
 
             $shopStock = (int) $this->shopStock;
@@ -292,7 +292,7 @@ class Products extends Component
                 'damage_stock' => $damageStock,
                 'total_stock' => $shopStock + $storeStock + $damageStock,
                 'available_stock' => $shopStock + $storeStock,
-                'Product_id' => $Product->id
+                'product_id' => $Product->id
             ]);
 
             DB::commit();
@@ -355,8 +355,8 @@ class Products extends Component
         $this->resetEditImage();
         // Find the Product with its related data
         $Product = ProductDetail::join('Product_suppliers', 'Product_details.supplier_id', '=', 'Product_suppliers.id')
-            ->join('Product_prices', 'Product_details.id', '=', 'Product_prices.Product_id')
-            ->join('Product_stocks', 'Product_details.id', '=', 'Product_stocks.Product_id')
+            ->join('Product_prices', 'Product_details.id', '=', 'Product_prices.product_id')
+            ->join('Product_stocks', 'Product_details.id', '=', 'product_stocks.product_id')
             ->select(
                 'Product_details.id',
                 'Product_details.code',
@@ -491,7 +491,7 @@ class Products extends Component
             ]);
 
             // Update the price record
-            ProductPrice::where('Product_id', $this->editId)->update([
+            ProductPrice::where('product_id', $this->editId)->update([
                 'supplier_price' => $this->editSupplierPrice ?? 0,
                 'selling_price' => $this->editSellingPrice,
                 'discount_price' => $this->editDiscountPrice,
@@ -502,7 +502,7 @@ class Products extends Component
             $storeStock = (int) $this->editStoreStock;
             $damageStock = (int) $this->editDamageStock;
             
-            ProductStock::where('Product_id', $this->editId)->update([
+            ProductStock::where('product_id', $this->editId)->update([
                 'shop_stock' => $shopStock,
                 'store_stock' => $storeStock,
                 'damage_stock' => $damageStock,
@@ -575,7 +575,7 @@ class Products extends Component
                 'supplier_price' => $this->editSupplierPrice ?? 0,
                 'selling_price' => $this->editSellingPrice,
                 'discount_price' => $this->editDiscountPrice,
-                'Product_id' => $Product->id
+                'product_id' => $Product->id
             ]);
 
             // Create stock record
@@ -589,7 +589,7 @@ class Products extends Component
                 'damage_stock' => $damageStock,
                 'total_stock' => $shopStock + $storeStock + $damageStock,
                 'available_stock' => $shopStock + $storeStock,
-                'Product_id' => $Product->id
+                'product_id' => $Product->id
             ]);
 
             DB::commit();
@@ -641,11 +641,11 @@ class Products extends Component
             DB::beginTransaction();
             
             // First delete any related sale_items
-            DB::table('sale_items')->where('Product_id', $this->deleteId)->delete();
+            DB::table('sale_items')->where('product_id', $this->deleteId)->delete();
             
             // Then delete the Product and its related data
-            ProductStock::where('Product_id', $this->deleteId)->delete();
-            ProductPrice::where('Product_id', $this->deleteId)->delete();
+            ProductStock::where('product_id', $this->deleteId)->delete();
+            ProductPrice::where('product_id', $this->deleteId)->delete();
             ProductDetail::where('id', $this->deleteId)->delete();
             
             DB::commit();

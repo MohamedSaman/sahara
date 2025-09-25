@@ -12,7 +12,7 @@ class StaffProduct extends Model
 
     // Fillable fields for mass assignment
     protected $fillable = [
-        'Product_id',     // foreign key to Product_details
+        'product_id',     // foreign key to product_details
         'staff_id',
         'quantity',
         'price',
@@ -24,16 +24,16 @@ class StaffProduct extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function ProductDetail()
+    public function productDetail()
     {
-        // 'Product_id' is the foreign key in staff_products table
-        // pointing to the 'id' of the Product_details table
-        return $this->belongsTo(ProductDetail::class, 'Product_id');
+        // 'product_id' is the foreign key in staff_products table
+        // pointing to the 'id' of the product_details table
+        return $this->belongsTo(ProductDetail::class, 'product_id');
     }
-    public function Product()
-{
-    return $this->belongsTo(ProductDetail::class, 'Product_id');
-}
+    public function product()
+    {
+        return $this->belongsTo(ProductDetail::class, 'product_id');
+    }
     public function staffSale()
     {
         return $this->belongsTo(StaffSale::class, 'staff_id');

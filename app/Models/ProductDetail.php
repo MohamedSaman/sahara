@@ -54,7 +54,7 @@ class ProductDetail extends Model
      */
     public function price(): HasOne
     {
-        return $this->hasOne(ProductPrice::class, 'Product_id');
+        return $this->hasOne(ProductPrice::class, 'product_id');
     }
 
     /**
@@ -62,6 +62,6 @@ class ProductDetail extends Model
      */
     public function stock(): HasOne
     {
-        return $this->hasOne(ProductStock::class, 'Product_id');
+        return $this->hasOne(ProductStock::class, 'product_id');
     }
 }

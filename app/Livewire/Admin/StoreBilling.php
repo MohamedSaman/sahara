@@ -88,8 +88,8 @@ class StoreBilling extends Component
     {
         if (strlen($this->search) >= 2) {
             // Search directly from main store inventory (not staff stock)
-            $this->searchResults = ProductDetail::join('Product_stocks', 'Product_stocks.Product_id', '=', 'Product_details.id')
-                ->join('Product_prices', 'Product_prices.Product_id', '=', 'Product_details.id')
+            $this->searchResults = ProductDetail::join('Product_stocks', 'product_stocks.product_id', '=', 'Product_details.id')
+                ->join('Product_prices', 'Product_prices.product_id', '=', 'Product_details.id')
                 ->select(
                     'Product_details.*',
                     'Product_prices.selling_price as selling_price',
@@ -114,8 +114,8 @@ class StoreBilling extends Component
     public function addToCart($ProductId)
     {
         // Get product details from store inventory
-        $Product = ProductDetail::join('Product_stocks', 'Product_stocks.Product_id', '=', 'Product_details.id')
-            ->join('Product_prices', 'Product_prices.Product_id', '=', 'Product_details.id')
+        $Product = ProductDetail::join('Product_stocks', 'product_stocks.product_id', '=', 'Product_details.id')
+            ->join('Product_prices', 'Product_prices.product_id', '=', 'Product_details.id')
             ->where('Product_details.id', $ProductId)
             ->select(
                 'Product_details.*',
@@ -240,7 +240,7 @@ class StoreBilling extends Component
 
     public function showDetail($ProductId)
     {
-        $this->ProductDetails = ProductDetail::join('Product_stocks', 'Product_stocks.Product_id', '=', 'Product_details.id')
+        $this->ProductDetails = ProductDetail::join('Product_stocks', 'product_stocks.product_id', '=', 'Product_details.id')
             ->select(
                 'Product_details.*',
                 'Product_stocks.selling_price as selling_price',
@@ -501,7 +501,7 @@ if ($this->paymentType === 'full') {
         $totalSoldVal = 0;
 
         foreach ($this->cart as $id => $item) {
-           $ProductStock = ProductStock::where('Product_id', $item['id'])->first();
+           $ProductStock = ProductStock::where('product_id', $item['id'])->first();
 if (!$ProductStock || $ProductStock->available_stock < $this->quantities[$id]) {
     throw new Exception("Insufficient stock for item: {$item['name']}. Available: {$ProductStock->available_stock}");
 }
@@ -513,7 +513,7 @@ if (!$ProductStock || $ProductStock->available_stock < $this->quantities[$id]) {
             // Insert sale item (linked to sales table)
             SaleItem::create([
                 'sale_id'    => $sale->id,
-                'Product_id'   => $item['id'],
+                'product_id'   => $item['id'],
                 'Product_code' => $item['code'],
                 'Product_name' => $item['name'],
                 'quantity'   => $this->quantities[$id],

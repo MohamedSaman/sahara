@@ -89,54 +89,54 @@ class Products extends Component
     }
     public function render()
     {
-        $Productes = ProductDetail::join('Product_suppliers', 'Product_details.supplier_id', '=', 'Product_suppliers.id')
-            ->join('Product_prices', 'Product_details.id', '=', 'Product_prices.product_id')
-            ->join('product_stocks', 'Product_details.id', '=', 'product_stocks.product_id')
+        $Productes = ProductDetail::join('product_suppliers', 'product_details.supplier_id', '=', 'product_suppliers.id')
+            ->join('product_prices', 'product_details.id', '=', 'product_prices.product_id')
+            ->join('product_stocks', 'product_details.id', '=', 'product_stocks.product_id')
             ->select(
-                'Product_details.id',
-                'Product_details.code',
-                'Product_details.name as Product_name',
-                'Product_details.model',
-                'Product_details.color',
-                'Product_details.made_by',
-                'Product_details.gender',
-                'Product_details.type',
-                'Product_details.movement',
-                'Product_details.dial_color',
-                'Product_details.strap_color',
-                'Product_details.strap_material',
-                'Product_details.case_diameter_mm',
-                'Product_details.case_thickness_mm',
-                'Product_details.glass_type',
-                'Product_details.water_resistance',
-                'Product_details.features',
-                'Product_details.image',
-                'Product_details.warranty',
-                'Product_details.description',
-                'Product_details.barcode',
-                'Product_details.status',
-                'Product_details.location',
-                'Product_details.brand',
-                'Product_details.category',
-                'Product_details.supplier_id',
-                'Product_suppliers.id as supplier_id',
-                'Product_suppliers.name as supplier_name',
-                'Product_prices.supplier_price',
-                'Product_prices.selling_price',
-                'Product_prices.discount_price',
-                'Product_stocks.shop_stock',
-                'Product_stocks.store_stock',
-                'Product_stocks.damage_stock',
-                'Product_stocks.total_stock',
-                'Product_stocks.available_stock'
+                'product_details.id',
+                'product_details.code',
+                'product_details.name as Product_name',
+                'product_details.model',
+                'product_details.color',
+                'product_details.made_by',
+                'product_details.gender',
+                'product_details.type',
+                'product_details.movement',
+                'product_details.dial_color',
+                'product_details.strap_color',
+                'product_details.strap_material',
+                'product_details.case_diameter_mm',
+                'product_details.case_thickness_mm',
+                'product_details.glass_type',
+                'product_details.water_resistance',
+                'product_details.features',
+                'product_details.image',
+                'product_details.warranty',
+                'product_details.description',
+                'product_details.barcode',
+                'product_details.status',
+                'product_details.location',
+                'product_details.brand',
+                'product_details.category',
+                'product_details.supplier_id',
+                'product_suppliers.id as supplier_id',
+                'product_suppliers.name as supplier_name',
+                'product_prices.supplier_price',
+                'product_prices.selling_price',
+                'product_prices.discount_price',
+                'product_stocks.shop_stock',
+                'product_stocks.store_stock',
+                'product_stocks.damage_stock',
+                'product_stocks.total_stock',
+                'product_stocks.available_stock'
             )
-            ->where('Product_details.name', 'like', '%' . $this->search . '%')
-            ->orWhere('Product_details.code', 'like', '%' . $this->search . '%')
-            ->orWhere('Product_details.model', 'like', '%' . $this->search . '%')
-            ->orWhere('Product_details.brand', 'like', '%' . $this->search . '%')
-            ->orWhere('Product_details.status', 'like', '%' . $this->search . '%')
-            ->orWhere('Product_details.barcode', 'like', '%' . $this->search . '%')
-            ->orderBy('Product_details.created_at', 'desc')
+            ->where('product_details.name', 'like', '%' . $this->search . '%')
+            ->orWhere('product_details.code', 'like', '%' . $this->search . '%')
+            ->orWhere('product_details.model', 'like', '%' . $this->search . '%')
+            ->orWhere('product_details.brand', 'like', '%' . $this->search . '%')
+            ->orWhere('product_details.status', 'like', '%' . $this->search . '%')
+            ->orWhere('product_details.barcode', 'like', '%' . $this->search . '%')
+            ->orderBy('product_details.created_at', 'desc')
             ->paginate(10);
 
         $ProductColors = ProductColors::orderBy('id', 'asc')->get();
@@ -168,47 +168,47 @@ class Products extends Component
     public function viewProduct($id)
     {
         // Find the Product with its related data
-        $this->ProductDetails = ProductDetail::join('Product_suppliers', 'Product_details.supplier_id', '=', 'Product_suppliers.id')
-            ->join('Product_prices', 'Product_details.id', '=', 'Product_prices.product_id')
-            ->join('Product_stocks', 'Product_details.id', '=', 'product_stocks.product_id')
+        $this->ProductDetails = ProductDetail::join('product_suppliers', 'product_details.supplier_id', '=', 'product_suppliers.id')
+            ->join('product_prices', 'product_details.id', '=', 'product_prices.product_id')
+            ->join('product_stocks', 'product_details.id', '=', 'product_stocks.product_id')
             ->select(
-                'Product_details.id',
-                'Product_details.code',
-                'Product_details.name as Product_name',
-                'Product_details.model',
-                'Product_details.color',
-                'Product_details.made_by',
-                'Product_details.gender',
-                'Product_details.type',
-                'Product_details.movement',
-                'Product_details.dial_color',
-                'Product_details.strap_color',
-                'Product_details.strap_material',
-                'Product_details.case_diameter_mm',
-                'Product_details.case_thickness_mm',
-                'Product_details.glass_type',
-                'Product_details.water_resistance',
-                'Product_details.features',
-                'Product_details.image',
-                'Product_details.warranty',
-                'Product_details.description',
-                'Product_details.barcode',
-                'Product_details.status',
-                'Product_details.location',
-                'Product_details.brand',
-                'Product_details.category',
-                'Product_details.supplier_id',
-                'Product_suppliers.name as supplier_name',
-                'Product_prices.supplier_price',
-                'Product_prices.selling_price',
-                'Product_prices.discount_price',
-                'Product_stocks.shop_stock',
-                'Product_stocks.store_stock',
-                'Product_stocks.damage_stock',
-                'Product_stocks.total_stock',
-                'Product_stocks.available_stock'
+                'product_details.id',
+                'product_details.code',
+                'product_details.name as Product_name',
+                'product_details.model',
+                'product_details.color',
+                'product_details.made_by',
+                'product_details.gender',
+                'product_details.type',
+                'product_details.movement',
+                'product_details.dial_color',
+                'product_details.strap_color',
+                'product_details.strap_material',
+                'product_details.case_diameter_mm',
+                'product_details.case_thickness_mm',
+                'product_details.glass_type',
+                'product_details.water_resistance',
+                'product_details.features',
+                'product_details.image',
+                'product_details.warranty',
+                'product_details.description',
+                'product_details.barcode',
+                'product_details.status',
+                'product_details.location',
+                'product_details.brand',
+                'product_details.category',
+                'product_details.supplier_id',
+                'product_suppliers.name as supplier_name',
+                'product_prices.supplier_price',
+                'product_prices.selling_price',
+                'product_prices.discount_price',
+                'product_stocks.shop_stock',
+                'product_stocks.store_stock',
+                'product_stocks.damage_stock',
+                'product_stocks.total_stock',
+                'product_stocks.available_stock'
             )
-            ->where('Product_details.id', $id)
+            ->where('product_details.id', $id)
             ->first();
 // dd($this->ProductDetails);        
         $this->js("$('#viewProductModal').modal('show')");
@@ -354,45 +354,45 @@ class Products extends Component
     {
         $this->resetEditImage();
         // Find the Product with its related data
-        $Product = ProductDetail::join('Product_suppliers', 'Product_details.supplier_id', '=', 'Product_suppliers.id')
-            ->join('Product_prices', 'Product_details.id', '=', 'Product_prices.product_id')
-            ->join('Product_stocks', 'Product_details.id', '=', 'product_stocks.product_id')
+        $Product = ProductDetail::join('product_suppliers', 'product_details.supplier_id', '=', 'product_suppliers.id')
+            ->join('product_prices', 'product_details.id', '=', 'product_prices.product_id')
+            ->join('product_stocks', 'product_details.id', '=', 'product_stocks.product_id')
             ->select(
-                'Product_details.id',
-                'Product_details.code',
-                'Product_details.name as Product_name',
-                'Product_details.model',
-                'Product_details.color',
-                'Product_details.made_by',
-                'Product_details.gender',
-                'Product_details.type',
-                'Product_details.movement',
-                'Product_details.dial_color',
-                'Product_details.strap_color',
-                'Product_details.strap_material',
-                'Product_details.case_diameter_mm',
-                'Product_details.case_thickness_mm',
-                'Product_details.glass_type',
-                'Product_details.water_resistance',
-                'Product_details.features',
-                'Product_details.image',
-                'Product_details.warranty',
-                'Product_details.description',
-                'Product_details.barcode',
-                'Product_details.status',
-                'Product_details.location',
-                'Product_details.brand',
-                'Product_details.category',
-                'Product_details.supplier_id',
-                'Product_suppliers.name as supplier_name',
-                'Product_prices.supplier_price',
-                'Product_prices.selling_price',
-                'Product_prices.discount_price',
-                'Product_stocks.shop_stock',
-                'Product_stocks.store_stock',
-                'Product_stocks.damage_stock'
+                'product_details.id',
+                'product_details.code',
+                'product_details.name as Product_name',
+                'product_details.model',
+                'product_details.color',
+                'product_details.made_by',
+                'product_details.gender',
+                'product_details.type',
+                'product_details.movement',
+                'product_details.dial_color',
+                'product_details.strap_color',
+                'product_details.strap_material',
+                'product_details.case_diameter_mm',
+                'product_details.case_thickness_mm',
+                'product_details.glass_type',
+                'product_details.water_resistance',
+                'product_details.features',
+                'product_details.image',
+                'product_details.warranty',
+                'product_details.description',
+                'product_details.barcode',
+                'product_details.status',
+                'product_details.location',
+                'product_details.brand',
+                'product_details.category',
+                'product_details.supplier_id',
+                'product_suppliers.name as supplier_name',
+                'product_prices.supplier_price',
+                'product_prices.selling_price',
+                'product_prices.discount_price',
+                'product_stocks.shop_stock',
+                'product_stocks.store_stock',
+                'product_stocks.damage_stock'
             )
-            ->where('Product_details.id', $id)
+            ->where('product_details.id', $id)
             ->first();
 
         // Basic information

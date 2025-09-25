@@ -103,17 +103,17 @@ class BillingPage extends Component
     public function updatedSearch()
     {
         if (strlen($this->search) >= 2) {
-            $this->searchResults = ProductDetail::join('Product_prices', 'Product_prices.product_id', '=', 'Product_details.id')
-                ->join('product_stocks', 'product_stocks.product_id', '=', 'Product_details.id')
-                ->select('Product_details.*', 'Product_prices.selling_price', 'Product_prices.discount_price', 'product_stocks.available_stock')
-                ->where('Product_details.status', '=', 'active')
+            $this->searchResults = ProductDetail::join('product_prices', 'product_prices.product_id', '=', 'product_details.id')
+                ->join('product_stocks', 'product_stocks.product_id', '=', 'product_details.id')
+                ->select('product_details.*', 'product_prices.selling_price', 'product_prices.discount_price', 'product_stocks.available_stock')
+                ->where('product_details.status', '=', 'active')
                 ->where('product_stocks.available_stock', '>', 0) // Only show products with stock > 0
                 ->where(function($query) {
-                    $query->where('Product_details.code', 'like', '%' . $this->search . '%')
-                        ->orWhere('Product_details.model', 'like', '%' . $this->search . '%')
-                        ->orWhere('Product_details.barcode', 'like', '%' . $this->search . '%')
-                        ->orWhere('Product_details.brand', 'like', '%' . $this->search . '%')
-                        ->orWhere('Product_details.name', 'like', '%' . $this->search . '%');
+                    $query->where('product_details.code', 'like', '%' . $this->search . '%')
+                        ->orWhere('product_details.model', 'like', '%' . $this->search . '%')
+                        ->orWhere('product_details.barcode', 'like', '%' . $this->search . '%')
+                        ->orWhere('product_details.brand', 'like', '%' . $this->search . '%')
+                        ->orWhere('product_details.name', 'like', '%' . $this->search . '%');
                 })
                 ->take(50)
                 ->get();
@@ -124,10 +124,10 @@ class BillingPage extends Component
 
     public function addToCart($ProductId)
     {
-        $Product = ProductDetail::join('Product_prices', 'Product_prices.product_id', '=', 'Product_details.id')
-            ->join('product_stocks', 'product_stocks.product_id', '=', 'Product_details.id')
-            ->where('Product_details.id', $ProductId)
-            ->select('Product_details.*', 'Product_prices.selling_price', 'Product_prices.discount_price', 
+        $Product = ProductDetail::join('product_prices', 'product_prices.product_id', '=', 'product_details.id')
+            ->join('product_stocks', 'product_stocks.product_id', '=', 'product_details.id')
+            ->where('product_details.id', $ProductId)
+            ->select('product_details.*', 'product_prices.selling_price', 'product_prices.discount_price', 
                      'product_stocks.available_stock')
             ->first();
 
@@ -207,11 +207,11 @@ class BillingPage extends Component
 
     public function showDetail($ProductId)
     {
-        $this->ProductDetails = ProductDetail::join('Product_prices', 'Product_prices.product_id', '=', 'Product_details.id')
-            ->join('product_stocks', 'product_stocks.product_id', '=', 'Product_details.id')
-            ->join('Product_suppliers', 'Product_suppliers.id', '=', 'Product_details.supplier_id')
-            ->select('Product_details.*', 'Product_prices.*', 'product_stocks.*', 'Product_suppliers.*', 'Product_suppliers.name as supplier_name')
-            ->where('Product_details.id', $ProductId)
+        $this->ProductDetails = ProductDetail::join('product_prices', 'product_prices.product_id', '=', 'product_details.id')
+            ->join('product_stocks', 'product_stocks.product_id', '=', 'product_details.id')
+            ->join('product_suppliers', 'product_suppliers.id', '=', 'product_details.supplier_id')
+            ->select('product_details.*', 'product_prices.*', 'product_stocks.*', 'product_suppliers.*', 'product_suppliers.name as supplier_name')
+            ->where('product_details.id', $ProductId)
             ->first();
 
         $this->js('$("#viewDetailModal").modal("show")');

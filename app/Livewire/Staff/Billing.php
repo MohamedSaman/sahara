@@ -93,16 +93,16 @@ class Billing extends Component
 public function updatedSearch()
 {
     if (strlen($this->search) >= 2) {
-        $this->searchResults = ProductDetail::join('staff_products', 'staff_products.product_id', '=', 'Product_details.id')
+        $this->searchResults = ProductDetail::join('staff_products', 'staff_products.product_id', '=', 'product_details.id')
             ->join('staff_sales', 'staff_sales.id', '=', 'staff_products.staff_sale_id')
             ->select(
-                'Product_details.id',
-                'Product_details.name',
-                'Product_details.code',
-                'Product_details.model',
-                'Product_details.brand',
-                'Product_details.barcode',
-                'Product_details.image', // ✅ Fixed: include image field
+                'product_details.id',
+                'product_details.name',
+                'product_details.code',
+                'product_details.model',
+                'product_details.brand',
+                'product_details.barcode',
+                'product_details.image', // ✅ Fixed: include image field
                 DB::raw('SUM(staff_products.quantity - staff_products.sold_quantity) as available_stock'),
                 DB::raw('MIN(staff_products.unit_price) as selling_price'),
                 DB::raw('MIN(staff_products.discount_per_unit) as discount_price'),
@@ -112,20 +112,20 @@ public function updatedSearch()
             ->where('staff_products.status', '!=', 'completed')
             ->whereRaw('staff_products.quantity > staff_products.sold_quantity')
             ->where(function($query) {
-                $query->where('Product_details.code', 'like', '%' . $this->search . '%')
-                    ->orWhere('Product_details.model', 'like', '%' . $this->search . '%')
-                    ->orWhere('Product_details.barcode', 'like', '%' . $this->search . '%')
-                    ->orWhere('Product_details.brand', 'like', '%' . $this->search . '%')
-                    ->orWhere('Product_details.name', 'like', '%' . $this->search . '%');
+                $query->where('product_details.code', 'like', '%' . $this->search . '%')
+                    ->orWhere('product_details.model', 'like', '%' . $this->search . '%')
+                    ->orWhere('product_details.barcode', 'like', '%' . $this->search . '%')
+                    ->orWhere('product_details.brand', 'like', '%' . $this->search . '%')
+                    ->orWhere('product_details.name', 'like', '%' . $this->search . '%');
             })
             ->groupBy(
-                'Product_details.id',
-                'Product_details.name',
-                'Product_details.code',
-                'Product_details.model',
-                'Product_details.brand',
-                'Product_details.barcode',
-                'Product_details.image' // ✅ Group by image too (required in strict SQL modes)
+                'product_details.id',
+                'product_details.name',
+                'product_details.code',
+                'product_details.model',
+                'product_details.brand',
+                'product_details.barcode',
+                'product_details.image' // ✅ Group by image too (required in strict SQL modes)
             )
             ->having('available_stock', '>', 0)
             ->take(50)
@@ -145,30 +145,30 @@ public function updatedSearch()
 public function addToCart($ProductId)
 {
     // Get total available stock across all assigned entries for this product
-    $Product = ProductDetail::join('staff_products', 'staff_products.product_id', '=', 'Product_details.id')
-        ->where('Product_details.id', $ProductId)
+    $Product = ProductDetail::join('staff_products', 'staff_products.product_id', '=', 'product_details.id')
+        ->where('product_details.id', $ProductId)
         ->where('staff_products.staff_id', auth()->id())
         ->where('staff_products.status', '!=', 'completed')
         ->whereRaw('staff_products.quantity > staff_products.sold_quantity')
         ->select(
-            'Product_details.id',
-            'Product_details.name',
-            'Product_details.code',
-            'Product_details.model',
-            'Product_details.brand',
-            'Product_details.image',
+            'product_details.id',
+            'product_details.name',
+            'product_details.code',
+            'product_details.model',
+            'product_details.brand',
+            'product_details.image',
             DB::raw('SUM(staff_products.quantity - staff_products.sold_quantity) as available_stock'),
             DB::raw('MIN(staff_products.unit_price) as selling_price'),
             DB::raw('MIN(staff_products.discount_per_unit) as discount_price'),
             DB::raw('MIN(staff_products.id) as staff_product_id')
         )
         ->groupBy(
-            'Product_details.id',
-            'Product_details.name',
-            'Product_details.code',
-            'Product_details.model',
-            'Product_details.brand',
-            'Product_details.image'
+            'product_details.id',
+            'product_details.name',
+            'product_details.code',
+            'product_details.model',
+            'product_details.brand',
+            'product_details.image'
         )
         ->having('available_stock', '>', 0)
         ->first();
@@ -294,19 +294,19 @@ public function addToCart($ProductId)
 
     public function showDetail($ProductId)
     {
-        $this->ProductDetails = ProductDetail::join('staff_products', 'staff_products.product_id', '=', 'Product_details.id')
-            ->join('Product_suppliers', 'Product_suppliers.id', '=', 'Product_details.supplier_id')
+        $this->ProductDetails = ProductDetail::join('staff_products', 'staff_products.product_id', '=', 'product_details.id')
+            ->join('product_suppliers', 'product_suppliers.id', '=', 'product_details.supplier_id')
             ->select(
-                'Product_details.*', 
+                'product_details.*', 
                 'staff_products.unit_price as selling_price',
                 'staff_products.discount_per_unit as discount_price',
                 'staff_products.quantity as total_stock',
                 'staff_products.sold_quantity as sold_stock',
                 DB::raw('(staff_products.quantity - staff_products.sold_quantity) as available_stock'),
-                'Product_suppliers.*',
-                'Product_suppliers.name as supplier_name'
+                'product_suppliers.*',
+                'product_suppliers.name as supplier_name'
             )
-            ->where('Product_details.id', $ProductId)
+            ->where('product_details.id', $ProductId)
             ->where('staff_products.staff_id', auth()->id())
             ->first();
 

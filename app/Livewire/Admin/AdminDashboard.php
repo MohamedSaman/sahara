@@ -157,7 +157,7 @@ class AdminDashboard extends Component
 
         // Calculate damaged inventory value
         $damagedValue = DB::table('product_stocks')
-            ->join('product_prices', 'product_stocks.product_id', '=', 'Product_prices.product_id')
+            ->join('product_prices', 'product_stocks.product_id', '=', 'product_prices.product_id')
             ->select(DB::raw('SUM(product_stocks.damage_stock * product_prices.supplier_price) as damaged_value'))
             ->first();
 
@@ -165,12 +165,12 @@ class AdminDashboard extends Component
 
         // Calculate total inventory value (all stocks)
         $totalInventoryValue = DB::table('product_stocks')
-            ->join('product_prices', 'product_stocks.product_id', '=', 'Product_prices.product_id')
+            ->join('product_prices', 'product_stocks.product_id', '=', 'product_prices.product_id')
             ->select(DB::raw('SUM(product_stocks.available_stock * product_prices.supplier_price) as total_value'))
             ->first();
 
         $totalAvailableInventory = DB::table('product_stocks')
-            ->join('product_prices', 'product_stocks.product_id', '=', 'Product_prices.product_id')
+            ->join('product_prices', 'product_stocks.product_id', '=', 'product_prices.product_id')
             ->select(DB::raw('SUM(product_stocks.available_stock * product_prices.supplier_price) as total_value'))
             ->first();
 

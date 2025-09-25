@@ -11,5 +11,5 @@ class ProductMadeBy extends Model
     protected $fillable = [
         'country_name',
     ];
-    protected $table = 'Product_made_bies';
+    protected $table = 'product_made_bies';
 }

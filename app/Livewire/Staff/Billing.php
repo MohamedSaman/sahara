@@ -650,8 +650,8 @@ foreach ($this->cart as $id => $item) {
         SaleItem::create([
             'sale_id' => $sale->id,
             'product_id' => $item['id'],
-            'Product_code' => $item['code'],
-            'Product_name' => $item['name'],
+            'product_code' => $item['code'],
+            'product_name' => $item['name'],
             'quantity' => $useQty,
             'unit_price' => $unitPrice,
             'discount' => $itemDiscount,

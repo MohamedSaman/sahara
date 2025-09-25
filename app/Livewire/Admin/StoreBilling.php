@@ -514,8 +514,8 @@ if (!$ProductStock || $ProductStock->available_stock < $this->quantities[$id]) {
             SaleItem::create([
                 'sale_id'    => $sale->id,
                 'product_id'   => $item['id'],
-                'Product_code' => $item['code'],
-                'Product_name' => $item['name'],
+                'product_code' => $item['code'],
+                'product_name' => $item['name'],
                 'quantity'   => $this->quantities[$id],
                 'unit_price' => $price,
                 'discount'   => $itemDiscount,
